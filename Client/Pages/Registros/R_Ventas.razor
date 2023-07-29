@@ -1,0 +1,199 @@
+@page "/RegistroVentas"
+@page "/RegistroVentas/{VentaId:int}"
+@using DealerAutos.Client.Extensors;
+@inject NotificationService notificationService
+@inject HttpClient httpClient
+
+<EditForm Model="ventas" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+
+    <div class="container">
+        <div class="card shadow-lg">
+            <div class="card-header">
+                <h3>Registro de ventas.</h3>
+            </div>
+            <div class=card-body>
+
+                <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 col-xl-4">
+                    <label>Venta Id:</label>
+                    <div class="input-group mb-3">
+                        <InputNumber @bind-Value="ventas.VentaId" class="form-control" aria-describedby="BotonBuscar" />
+                        <button @onclick="Buscar" class="btn btn-outline-primary" type="button" id="BotonBuscar"><i class="oi oi-magnifying-glass" /></button>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="Nombre">Nombre:</label>
+                    <InputText @bind-Value="ventas.Nombre" class="form-control" />
+                    <ValidationMessage For="@(() => ventas.Nombre)" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="Apellido">Apellido:</label>
+                    <InputText @bind-Value="ventas.Apellido" class="form-control" />
+                    <ValidationMessage For="@(() => ventas.Apellido)" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="Fecha">Fecha:</label>
+                    <InputDate @bind-Value="ventas.Fecha" class="form-control" />
+                    <ValidationMessage For="@(() => ventas.Fecha)" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="Telefono">Telefono:</label>
+                    <InputText @bind-Value="ventas.Telefono" class="form-control" />
+                    <ValidationMessage For="@(() => ventas.Telefono)" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="Cedula">Cedula:</label>
+                    <InputText @bind-Value="ventas.Cedula" class="form-control" />
+                    <ValidationMessage For="@(() => ventas.Cedula)" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="Direccion">Direccion:</label>
+                    <InputText @bind-Value="ventas.Direccion" class="form-control" />
+                    <ValidationMessage For="@(() => ventas.Direccion)" />
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label" for="DireccionVenta">DireccionVenta:</label>
+                    <InputText @bind-Value="ventas.DireccionVenta" class="form-control" />
+                    <ValidationMessage For="@(() => ventas.DireccionVenta)" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="Ciudad">Ciudad:</label>
+                    <InputText @bind-Value="ventas.Ciudad" class="form-control" />
+                    <ValidationMessage For="@(() => ventas.Ciudad)" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="Precio">Precio:</label>
+                    <InputNumber @bind-Value="ventas.Precio" class="form-control" />
+                    <ValidationMessage For="@(() => ventas.Precio)" />
+                </div>
+
+            </div>
+            <div class="card-footer d-flex justify-content-center">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-outline-primary" @onclick="Nuevo">Nuevo <i class="oi oi-file" /></button>
+                    <button type="submit" class="btn btn-outline-success">Guardar <i class="oi oi-document" /></button>
+                    <button type="button" class="btn btn-outline-danger" @onclick="Eliminar">Eliminar <i class="oi oi-trash" /></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</EditForm>
+<label>@Mensaje</label>
+
+
+@code {
+
+    [Parameter]
+
+    public int VentaId { get; set; }
+
+    public Ventas ventas { get; set; } = new Ventas();
+
+    public string Mensaje { get; set; } = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if(VentaId>0)
+        {
+            this.ventas.VentaId = VentaId;
+            await Buscar();
+        }
+    }
+
+    public async Task Buscar()
+    {
+        try
+        {
+            var ventaEncontrada = await httpClient.GetFromJsonAsync<Ventas>($"api/Ventas/{ventas.VentaId}");
+            if (ventaEncontrada != null)
+            {
+                this.ventas = ventaEncontrada;
+                StateHasChanged();
+            }
+            else
+            {
+                notificationService.ShowNotification(
+                    titulo: "Error de búsqueda",
+                    mensaje: "Registro no encontrado",
+                    NotificationSeverity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            notificationService.ShowNotification(
+                titulo: "Error de búsqueda",
+                mensaje: ex.Message,
+                NotificationSeverity.Error);
+        }
+    }
+
+    public async Task Guardar()
+    {
+        try
+        {
+            using var response = await httpClient.PostAsJsonAsync("api/Ventas", ventas);
+            response.EnsureSuccessStatusCode();
+
+            var ventaDevuelta = await response.Content.ReadFromJsonAsync<Ventas>();
+            if (ventaDevuelta != null)
+            {
+                notificationService.ShowNotification(
+                    titulo: "Éxito",
+                    mensaje: "Guardado correctamente",
+                    NotificationSeverity.Success);
+                this.ventas = ventaDevuelta;
+            }
+        }
+        catch (Exception ex)
+        {
+            notificationService.ShowNotification(
+                titulo: "Error al guardar",
+                mensaje: ex.Message,
+                NotificationSeverity.Error);
+        }
+    }
+
+    public void Nuevo()
+    {
+        this.ventas = new Ventas();
+        Mensaje = string.Empty;
+    }
+
+    public async Task Eliminar()
+    {
+        using var response = await httpClient.DeleteAsync($"api/Ventas/{ventas.VentaId}");
+
+        if(!response.IsSuccessStatusCode)
+        {
+            notificationService.ShowNotification(titulo: "No eliminado", mensaje: "No hay nada por eliminar", NotificationSeverity.Warning);
+            return;
+        }
+        else
+        {
+            Nuevo();
+            notificationService.ShowNotification(titulo: "Eliminado", mensaje: "La venta se ha eliminado correctamente", NotificationSeverity.Error);
+        }
+    }
+
+    public bool Validar()
+    {
+        return ventas.Nombre != null && 
+               ventas.Apellido != null && 
+               ventas.Telefono != null &&
+               ventas.Cedula != null &&
+               ventas.Direccion != null &&
+               ventas.DireccionVenta != null &&
+               ventas.Ciudad != null;
+    }
+}

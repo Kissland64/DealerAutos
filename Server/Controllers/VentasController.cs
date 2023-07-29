@@ -24,7 +24,7 @@ namespace DealerAutos.Server.Controllers
             return await _context.Ventas.ToListAsync();
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{Ventaid}")]
         public async Task<ActionResult<Ventas>> GetVentas(int id)
         {
             if (_context.Ventas == null)
@@ -54,7 +54,7 @@ namespace DealerAutos.Server.Controllers
         }
 
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{Ventaid}")]
         public async Task<IActionResult> DeleteVentas(int id)
         {
             if (_context.Ventas == null)

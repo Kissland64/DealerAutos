@@ -18,6 +18,9 @@ public class Ventas{
     public string? Telefono { get; set; }
 
     [Required(ErrorMessage = "Este campo es necesario")]
+    public string Cedula { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "Este campo es necesario")]
     public string Direccion { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Este campo es necesario")]
@@ -25,9 +28,6 @@ public class Ventas{
     
     [Required(ErrorMessage = "Este campo es necesario")]
     public string Ciudad { get; set; } = string.Empty;
-
-    [Required(ErrorMessage = "Este campo es necesario")]
-    public string Matricula { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Este campo es necesario")]
     public double Precio { get; set; }
