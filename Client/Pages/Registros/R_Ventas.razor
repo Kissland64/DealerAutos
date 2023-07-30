@@ -13,12 +13,12 @@
                 <h3>Registro de ventas.</h3>
             </div>
             <div class=card-body>
-
                 <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 col-xl-4">
-                    <label>Venta Id:</label>
+                    <label>Entrada Id:</label>
                     <div class="input-group mb-3">
                         <InputNumber @bind-Value="ventas.VentaId" class="form-control" aria-describedby="BotonBuscar" />
-                        <button @onclick="Buscar" class="btn btn-outline-primary" type="button" id="BotonBuscar"><i class="oi oi-magnifying-glass" /></button>
+                        <button @onclick="Buscar" class="btn btn-outline-primary" 
+                        type="button" id="BotonBuscar"><i class="oi oi-magnifying-glass"></i></button>
                     </div>
                 </div>
 
@@ -91,7 +91,6 @@
 </EditForm>
 <label>@Mensaje</label>
 
-
 @code {
 
     [Parameter]
@@ -104,9 +103,9 @@
 
     protected override async Task OnInitializedAsync()
     {
-        if(VentaId>0)
+        if (VentaId > 0)
         {
-            this.ventas.VentaId = VentaId;
+            ventas.VentaId = VentaId;
             await Buscar();
         }
     }
@@ -118,15 +117,22 @@
             var ventaEncontrada = await httpClient.GetFromJsonAsync<Ventas>($"api/Ventas/{ventas.VentaId}");
             if (ventaEncontrada != null)
             {
-                this.ventas = ventaEncontrada;
+                ventas = ventaEncontrada;
                 StateHasChanged();
+
+                notificationService.ShowNotification(
+                    titulo: "Búsqueda exitosa",
+                    mensaje: "Se encontró la venta.",
+                    NotificationSeverity.Success
+                );
             }
             else
             {
                 notificationService.ShowNotification(
                     titulo: "Error de búsqueda",
                     mensaje: "Registro no encontrado",
-                    NotificationSeverity.Error);
+                    NotificationSeverity.Error
+                );
             }
         }
         catch (Exception ex)
@@ -134,7 +140,8 @@
             notificationService.ShowNotification(
                 titulo: "Error de búsqueda",
                 mensaje: ex.Message,
-                NotificationSeverity.Error);
+                NotificationSeverity.Error
+            );
         }
     }
 
@@ -145,55 +152,81 @@
             using var response = await httpClient.PostAsJsonAsync("api/Ventas", ventas);
             response.EnsureSuccessStatusCode();
 
-            var ventaDevuelta = await response.Content.ReadFromJsonAsync<Ventas>();
-            if (ventaDevuelta != null)
+            var exito = await response.Content.ReadFromJsonAsync<Ventas>();
+            if (exito != null)
             {
+                ventas = exito;
+                StateHasChanged();
+                Nuevo();
                 notificationService.ShowNotification(
                     titulo: "Éxito",
-                    mensaje: "Guardado correctamente",
-                    NotificationSeverity.Success);
-                this.ventas = ventaDevuelta;
+                    mensaje: "Registro guardado",
+                    NotificationSeverity.Success
+                );
+            }
+            else
+            {
+                notificationService.ShowNotification(
+                    titulo: "Error",
+                    mensaje: "El registro no se guardó correctamente",
+                    NotificationSeverity.Error
+                );
             }
         }
         catch (Exception ex)
         {
             notificationService.ShowNotification(
-                titulo: "Error al guardar",
+                titulo: "Error",
                 mensaje: ex.Message,
-                NotificationSeverity.Error);
+                NotificationSeverity.Error
+            );
         }
     }
 
     public void Nuevo()
     {
-        this.ventas = new Ventas();
+        ventas = new Ventas();
         Mensaje = string.Empty;
+
+        notificationService.ShowNotification(
+            titulo: "Nueva venta",
+            mensaje: "Se ha creado una nueva venta.",
+            NotificationSeverity.Info
+        );
     }
 
     public async Task Eliminar()
     {
-        using var response = await httpClient.DeleteAsync($"api/Ventas/{ventas.VentaId}");
+        try
+        {
+            using var response = await httpClient.DeleteAsync($"api/Ventas/{ventas.VentaId}");
+            response.EnsureSuccessStatusCode();
 
-        if(!response.IsSuccessStatusCode)
-        {
-            notificationService.ShowNotification(titulo: "No eliminado", mensaje: "No hay nada por eliminar", NotificationSeverity.Warning);
-            return;
-        }
-        else
-        {
             Nuevo();
-            notificationService.ShowNotification(titulo: "Eliminado", mensaje: "La venta se ha eliminado correctamente", NotificationSeverity.Error);
+            notificationService.ShowNotification(
+                titulo: "Eliminado",
+                mensaje: "La venta se ha eliminado correctamente",
+                NotificationSeverity.Success
+            );
+        }
+        catch (Exception ex)
+        {
+            notificationService.ShowNotification(
+                titulo: "Error",
+                mensaje: ex.Message,
+                NotificationSeverity.Error
+            );
         }
     }
 
     public bool Validar()
     {
-        return ventas.Nombre != null && 
-               ventas.Apellido != null && 
-               ventas.Telefono != null &&
-               ventas.Cedula != null &&
-               ventas.Direccion != null &&
-               ventas.DireccionVenta != null &&
-               ventas.Ciudad != null;
+        return !string.IsNullOrEmpty(ventas.Nombre) &&
+               !string.IsNullOrEmpty(ventas.Apellido) &&
+               !string.IsNullOrEmpty(ventas.Telefono) &&
+               !string.IsNullOrEmpty(ventas.Cedula) &&
+               !string.IsNullOrEmpty(ventas.Direccion) &&
+               !string.IsNullOrEmpty(ventas.DireccionVenta) &&
+               !string.IsNullOrEmpty(ventas.Ciudad);
     }
 }

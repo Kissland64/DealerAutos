@@ -17,20 +17,19 @@ namespace DealerAutos.Server.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Ventas>>> GetVentas()
         {
-            if (_context.Ventas == null)
+            var ventas = await _context.Ventas.ToListAsync();
+
+            if (ventas == null || ventas.Count == 0)
             {
                 return NotFound();
             }
-            return await _context.Ventas.ToListAsync();
+
+            return ventas;
         }
 
-        [HttpGet("{Ventaid}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<Ventas>> GetVentas(int id)
         {
-            if (_context.Ventas == null)
-            {
-                return NotFound();
-            }
             var ventas = await _context.Ventas.FindAsync(id);
 
             if (ventas == null)
@@ -44,23 +43,22 @@ namespace DealerAutos.Server.Controllers
         [HttpPost]
         public async Task<ActionResult<Ventas>> PostVentas(Ventas ventas)
         {
-            if (!VentasExists(ventas.VentaId))
+            if (ventas.VentaId == 0)
+            {
                 _context.Ventas.Add(ventas);
+            }
             else
+            {
                 _context.Ventas.Update(ventas);
+            }
 
             await _context.SaveChangesAsync();
             return Ok(ventas);
         }
 
-
-        [HttpDelete("{Ventaid}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteVentas(int id)
         {
-            if (_context.Ventas == null)
-            {
-                return NotFound();
-            }
             var ventas = await _context.Ventas.FindAsync(id);
             if (ventas == null)
             {
@@ -75,7 +73,7 @@ namespace DealerAutos.Server.Controllers
 
         private bool VentasExists(int id)
         {
-            return (_context.Ventas?.Any(p => p.VentaId == id)).GetValueOrDefault();
+            return _context.Ventas.Any(p => p.VentaId == id);
         }
     }
 }
