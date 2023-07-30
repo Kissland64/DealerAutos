@@ -1,22 +1,22 @@
-@page "/RegistroVentas"
-@page "/RegistroVentas/{VentaId:int}"
+@page "/RegistroMarcas"
+@page "/RegistroMarcas/{MarcaId:int}"
 @using DealerAutos.Client.Extensors;
 @inject NotificationService notificationService
 @inject HttpClient httpClient
 
-<EditForm Model="ventas" OnValidSubmit="Guardar">
+<EditForm Model="marca" OnValidSubmit="Guardar">
     <DataAnnotationsValidator />
 
     <div class="container">
         <div class="card shadow-lg">
             <div class="card-header">
-                <h3>Registro de ventas.</h3>
+                <h3>Registro de marcas.</h3>
             </div>
             <div class=card-body>
                 <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 col-xl-4">
-                    <label>Venta Id:</label>
+                    <label>Entrada Id:</label>
                     <div class="input-group mb-3">
-                        <InputNumber @bind-Value="ventas.VentaId" class="form-control" aria-describedby="BotonBuscar" />
+                        <InputNumber @bind-Value="marca.MarcaId" class="form-control" aria-describedby="BotonBuscar" />
                         <button @onclick="Buscar" class="btn btn-outline-primary" 
                         type="button" id="BotonBuscar"><i class="oi oi-magnifying-glass"></i></button>
                     </div>
@@ -24,56 +24,32 @@
 
                 <div class="mb-3">
                     <label class="form-label" for="Nombre">Nombre:</label>
-                    <InputText @bind-Value="ventas.Nombre" class="form-control" />
-                    <ValidationMessage For="@(() => ventas.Nombre)" />
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label" for="Apellido">Apellido:</label>
-                    <InputText @bind-Value="ventas.Apellido" class="form-control" />
-                    <ValidationMessage For="@(() => ventas.Apellido)" />
+                    <InputText @bind-Value="marca.Nombre" class="form-control" />
+                    <ValidationMessage For="@(() => marca.Nombre)" />
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label" for="Fecha">Fecha:</label>
-                    <InputDate @bind-Value="ventas.Fecha" class="form-control" />
-                    <ValidationMessage For="@(() => ventas.Fecha)" />
+                    <InputDate @bind-Value="marca.Fecha" class="form-control" />
+                    <ValidationMessage For="@(() => marca.Fecha)" />
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label" for="Telefono">Telefono:</label>
-                    <InputText @bind-Value="ventas.Telefono" class="form-control" />
-                    <ValidationMessage For="@(() => ventas.Telefono)" />
+                    <label class="form-label" for="FechaCreacion">FechaCreacion:</label>
+                    <InputDate @bind-Value="marca.FechaCreacion" class="form-control" />
+                    <ValidationMessage For="@(() => marca.FechaCreacion)" />
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label" for="Cedula">Cedula:</label>
-                    <InputText @bind-Value="ventas.Cedula" class="form-control" />
-                    <ValidationMessage For="@(() => ventas.Cedula)" />
+                    <label class="form-label" for="Modelo">Modelo:</label>
+                    <InputText @bind-Value="marca.Modelo" class="form-control" />
+                    <ValidationMessage For="@(() => marca.Modelo)" />
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label" for="Direccion">Direccion:</label>
-                    <InputText @bind-Value="ventas.Direccion" class="form-control" />
-                    <ValidationMessage For="@(() => ventas.Direccion)" />
-                </div>
-                
-                <div class="mb-3">
-                    <label class="form-label" for="DireccionVenta">DireccionVenta:</label>
-                    <InputText @bind-Value="ventas.DireccionVenta" class="form-control" />
-                    <ValidationMessage For="@(() => ventas.DireccionVenta)" />
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label" for="Ciudad">Ciudad:</label>
-                    <InputText @bind-Value="ventas.Ciudad" class="form-control" />
-                    <ValidationMessage For="@(() => ventas.Ciudad)" />
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label" for="Precio">Precio:</label>
-                    <InputNumber @bind-Value="ventas.Precio" class="form-control" />
-                    <ValidationMessage For="@(() => ventas.Precio)" />
+                    <label class="form-label" for="Tipo">Tipo:</label>
+                    <InputText @bind-Value="marca.Tipo" class="form-control" />
+                    <ValidationMessage For="@(() => marca.Tipo)" />
                 </div>
 
             </div>
@@ -95,17 +71,17 @@
 
     [Parameter]
 
-    public int VentaId { get; set; }
+    public int MarcaId { get; set; }
 
-    public Ventas ventas { get; set; } = new Ventas();
+    public Marca marca { get; set; } = new Marca();
 
     public string Mensaje { get; set; } = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
-        if (VentaId > 0)
+        if (MarcaId > 0)
         {
-            ventas.VentaId = VentaId;
+            marca.MarcaId = MarcaId;
             await Buscar();
         }
     }
@@ -114,10 +90,10 @@
     {
         try
         {
-            var ventaEncontrada = await httpClient.GetFromJsonAsync<Ventas>($"api/Ventas/{ventas.VentaId}");
-            if (ventaEncontrada != null)
+            var marcaEncontrada = await httpClient.GetFromJsonAsync<Marca>($"api/Marcas/{marca.MarcaId}");
+            if (marcaEncontrada != null)
             {
-                ventas = ventaEncontrada;
+                marca = marcaEncontrada;
                 StateHasChanged();
 
                 notificationService.ShowNotification(
@@ -149,13 +125,13 @@
     {
         try
         {
-            using var response = await httpClient.PostAsJsonAsync("api/Ventas", ventas);
+            using var response = await httpClient.PostAsJsonAsync("api/Marcas", marca);
             response.EnsureSuccessStatusCode();
 
-            var exito = await response.Content.ReadFromJsonAsync<Ventas>();
+            var exito = await response.Content.ReadFromJsonAsync<Marca>();
             if (exito != null)
             {
-                ventas = exito;
+                marca = exito;
                 StateHasChanged();
                 Nuevo();
                 notificationService.ShowNotification(
@@ -185,7 +161,7 @@
 
     public void Nuevo()
     {
-        ventas = new Ventas();
+        marca = new Marca();
         Mensaje = string.Empty;
 
         notificationService.ShowNotification(
@@ -199,7 +175,7 @@
     {
         try
         {
-            using var response = await httpClient.DeleteAsync($"api/Ventas/{ventas.VentaId}");
+            using var response = await httpClient.DeleteAsync($"api/Marcas/{marca.MarcaId}");
             response.EnsureSuccessStatusCode();
 
             Nuevo();
@@ -221,12 +197,8 @@
 
     public bool Validar()
     {
-        return !string.IsNullOrEmpty(ventas.Nombre) &&
-               !string.IsNullOrEmpty(ventas.Apellido) &&
-               !string.IsNullOrEmpty(ventas.Telefono) &&
-               !string.IsNullOrEmpty(ventas.Cedula) &&
-               !string.IsNullOrEmpty(ventas.Direccion) &&
-               !string.IsNullOrEmpty(ventas.DireccionVenta) &&
-               !string.IsNullOrEmpty(ventas.Ciudad);
+        return !string.IsNullOrEmpty(marca.Nombre) &&
+               !string.IsNullOrEmpty(marca.Modelo) &&
+               !string.IsNullOrEmpty(marca.Tipo);
     }
 }
