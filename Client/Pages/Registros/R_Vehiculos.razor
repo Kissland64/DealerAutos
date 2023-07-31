@@ -186,7 +186,7 @@
             }
 
             StateHasChanged();
-            notify.ShowNotification(titulo: "Encontrado", mensaje: "La compra se ha encontrado con exito", NotificationSeverity.Success);
+            notify.ShowNotification(titulo: "Encontrado", mensaje: "El vehiculo se ha encontrado con exito", NotificationSeverity.Success);
             return true;
             }
             else
@@ -196,7 +196,7 @@
             }
             catch
             {
-            notify.ShowNotification(titulo: "No encontrado", mensaje: "Esa compra no existe, intentelo de nuevo", NotificationSeverity.Warning);
+            notify.ShowNotification(titulo: "No encontrado", mensaje: "Ese vehiculo no existe, intentelo de nuevo", NotificationSeverity.Warning);
             return false;
         }
     }
@@ -252,7 +252,7 @@
     public async Task Guardar()
     {
         vehiculos.VehiculosDetalles = this.vehiculos.VehiculosDetalles.ToList();
-        using var response = await httpClient.PostAsJsonAsync("api/Compras", vehiculos);
+        using var response = await httpClient.PostAsJsonAsync("api/Vehiculos", vehiculos);
 
         if(Validar())
         {
@@ -297,7 +297,7 @@
                 else
                 {
                     Nuevo();
-                    notify.ShowNotification(titulo: "Eliminado", mensaje: "La compra se ha eliminado correctamente", NotificationSeverity.Error);
+                    notify.ShowNotification(titulo: "Eliminado", mensaje: "El registro se ha eliminado correctamente", NotificationSeverity.Error);
                 }
             }
         }
@@ -330,7 +330,7 @@
                 vehiculosDetalles.Precio = vehiculos.Precio;
                 vehiculos.VehiculosDetalles.Add(vehiculosDetalles);
                 vehiculosDetalles = new VehiculosDetalles();
-                notify.ShowNotification(titulo: "Compra Agregada", mensaje: "La compra se ha guardado correctamente", NotificationSeverity.Success);
+                notify.ShowNotification(titulo: "Vehiculo Agregado", mensaje: "El detalle se ha guardado correctamente", NotificationSeverity.Success);
 
                 foreach(var item in vehiculos.VehiculosDetalles)
                 {
