@@ -14,19 +14,24 @@ public class Vehiculos{
 
     public DateTime Fecha { get; set; } = DateTime.Now;
 
-    public DateTime Anio { get; set; }
+    public string Anio { get; set; } =string.Empty;
 
     [Required(ErrorMessage = "Este campo es necesario")]
+    [Range(7,7,ErrorMessage = "Es necesario 7 caracteres {1} y {2}")]
     public string Placa { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Este campo es necesario")]
     public double Precio { get; set; }
+
+    public string Descripcion { get; set; } = string.Empty;
 
     public double Existencia { get; set; }
 
     public string? Imagen { get; set;}
 
     public int CantidadEnposesion { get; set; }
+
+    public double Total { get; set; }
 
     [ForeignKey("VehiculoId")]
     public ICollection<VehiculosDetalles> VehiculosDetalles { get; set; } = new List<VehiculosDetalles>();

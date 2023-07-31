@@ -11,6 +11,8 @@ public class VehiculosDetalles
 
     public int MarcaId { get; set; }
 
+    public double Precio { get; set; }
+
     [Required(ErrorMessage = "Este campo es necesario")]
     public int CantidadAquirida { get; set; }
 }

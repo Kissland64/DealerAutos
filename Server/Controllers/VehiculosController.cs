@@ -55,7 +55,7 @@ namespace DealerAutos.Server.Controllers
         [HttpDelete("{Id}")]
         public async Task<IActionResult> EliminarVehiculos(int VehiculoId)
         {
-            var vehiculo = await _context.Vehiculos.Include(c => c.VehiculosDetalles).FirstOrDefaultAsync(v => v.VehiculoId == VehiculoId);
+            var vehiculo = await _context.Vehiculos.Include(v => v.VehiculosDetalles).FirstOrDefaultAsync(v => v.VehiculoId == VehiculoId);
 
             if(vehiculo == null)
             {
