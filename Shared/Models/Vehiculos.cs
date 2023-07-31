@@ -7,6 +7,8 @@ public class Vehiculos{
 
     public int VehiculoId { get; set; }
 
+    public int MarcaId { get; set; }
+
     [Required(ErrorMessage = "Este campo es necesario")]
     public string Nombre { get; set; } = string.Empty;
 
@@ -23,6 +25,8 @@ public class Vehiculos{
     public double Existencia { get; set; }
 
     public string? Imagen { get; set;}
+
+    public int CantidadEnposesion { get; set; }
 
     [ForeignKey("VehiculoId")]
     public ICollection<VehiculosDetalles> VehiculosDetalles { get; set; } = new List<VehiculosDetalles>();

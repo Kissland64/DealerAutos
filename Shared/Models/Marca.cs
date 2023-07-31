@@ -19,5 +19,7 @@ public class Marca{
     [Required(ErrorMessage = "Este campo es necesario")]
     public string Tipo { get; set; } = string.Empty;
 
+    public double Existencia { get; set; }
+
     public string? Imagen { get; set;}
 }
