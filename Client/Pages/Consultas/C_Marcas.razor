@@ -1,0 +1,88 @@
+@page "/ConsultaMarcas"
+@inject HttpClient httpClient
+
+<div class="card">
+    <div class="card">
+
+        <div class="card-header">
+            <h3> Consulta de marcas </h3>
+        </div>
+        <div class="card-body">
+            <form>
+                <div class="input-group d-flex align-items-end">
+
+                    <InputSelect class="form-control col-2" @bind-Value="filtro">
+                        <option value="1">MarcaId</option>
+                        <option value="2">Nombre</option>
+                        <option value="4">Fecha</option>
+                        <option value="5">FechaCreacion</option>
+                        <option value="6">Modelo</option>
+                        <option value="7">Tipo</option>
+                    </InputSelect>
+
+                    <div class="flex-fill mx-2">
+
+                        <div class="input-group">
+                            <label class="input-group-text"> Busqueda </label>
+                            <InputText class="form-control" @bind-Value="Criterio" />
+                        </div>
+
+                    </div>
+
+                    <button type="button" class="btn btn-sm-10 btn-primary" @onclick="Buscar"> <span class="oi oi-magnifying-glass"></span> Buscar </button>
+                </div>
+            </form>
+        </div>
+        @if (marcas is not null)
+        {
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>MarcaId</th>
+                        <th>Nombre</th>
+                        <th>Fecha</th>
+                        <th>FechaCreacion</th>
+                        <th>Modelo</th>
+                        <th>Tipo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in marcas)
+                    {
+                        <tr>
+                            <td>@item.MarcaId</td>
+                            <td>@item.Nombre</td>
+                            <td>@item.Fecha.ToString("dd/MM/yyyy")</td>
+                            <td>@item.FechaCreacion.ToString("dd/MM/yyyy")</td>
+                            <td>@item.Modelo</td>
+                            <td>@item.Tipo</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+    <div class="card-footer">
+        <div class="form-row justify-content-sm-between" aria-orientation="vertical">
+            <div class="col-3">
+                <label for="CantidaRegistro" class="col-form-label"><strong>Filas</strong>&nbsp;</label>
+                <input id="CantidaRegistro" @bind-value="@conteo" disabled class="form-control" />
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    public List<Marca>? marcas { get; set; } = new List<Marca>();
+    public int conteo { get; set; }
+    public string filtro { get; set; }
+    public string Criterio { get; set; }
+
+    public async Task Buscar()
+    {
+        var marca = await httpClient.GetFromJsonAsync<List<Marca>>($"api/Marcas");
+        marcas = marca;
+        conteo = marcas != null ? marcas!.Count() : 0;
+        StateHasChanged();
+    }
+}

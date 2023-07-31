@@ -98,7 +98,7 @@
 
                 notificationService.ShowNotification(
                     titulo: "Búsqueda exitosa",
-                    mensaje: "Se encontró la venta.",
+                    mensaje: "Se encontró la marca.",
                     NotificationSeverity.Success
                 );
             }
@@ -165,8 +165,8 @@
         Mensaje = string.Empty;
 
         notificationService.ShowNotification(
-            titulo: "Nueva venta",
-            mensaje: "Se ha creado una nueva venta.",
+            titulo: "Nueva marca",
+            mensaje: "Se ha creado una nueva marca.",
             NotificationSeverity.Info
         );
     }
@@ -181,7 +181,7 @@
             Nuevo();
             notificationService.ShowNotification(
                 titulo: "Eliminado",
-                mensaje: "La venta se ha eliminado correctamente",
+                mensaje: "La marca se ha eliminado correctamente",
                 NotificationSeverity.Success
             );
         }
