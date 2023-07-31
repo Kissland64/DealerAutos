@@ -12,7 +12,7 @@ public class Ventas{
     [Required(ErrorMessage = "Este campo es necesario")]
     public string Apellido { get; set; } = string.Empty;
 
-    public DateTime Fecha { get; set; }
+    public DateTime Fecha { get; set; } = DateTime.Now;
 
     [Required(ErrorMessage = "Este campo es necesario")]
     public string? Telefono { get; set; }

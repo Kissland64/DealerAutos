@@ -9,7 +9,7 @@ public class Marca{
     [Required(ErrorMessage = "Este campo es necesario")]
     public string Nombre { get; set; } = string.Empty;
 
-    public DateTime Fecha { get; set; }
+    public DateTime Fecha { get; set; } = DateTime.Now;
 
     public DateTime FechaCreacion { get; set; }
 
@@ -18,4 +18,6 @@ public class Marca{
 
     [Required(ErrorMessage = "Este campo es necesario")]
     public string Tipo { get; set; } = string.Empty;
+
+    public string? Imagen { get; set;}
 }

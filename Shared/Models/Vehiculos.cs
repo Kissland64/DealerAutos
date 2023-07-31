@@ -10,18 +10,19 @@ public class Vehiculos{
     [Required(ErrorMessage = "Este campo es necesario")]
     public string Nombre { get; set; } = string.Empty;
 
-    public DateTime FechaLlegada { get; set; }
+    public DateTime Fecha { get; set; } = DateTime.Now;
 
-    public DateTime FechaCreacion { get; set; }
-
-    [Required(ErrorMessage = "Este campo es necesario")]
-    public string Color { get; set; } = string.Empty;
+    public DateTime Anio { get; set; }
 
     [Required(ErrorMessage = "Este campo es necesario")]
     public string Placa { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Este campo es necesario")]
     public double Precio { get; set; }
+
+    public double Existencia { get; set; }
+
+    public string? Imagen { get; set;}
 
     [ForeignKey("VehiculoId")]
     public ICollection<VehiculosDetalles> VehiculosDetalles { get; set; } = new List<VehiculosDetalles>();

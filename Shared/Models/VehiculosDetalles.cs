@@ -12,5 +12,5 @@ public class VehiculosDetalles
     public int MarcaId { get; set; }
 
     [Required(ErrorMessage = "Este campo es necesario")]
-    public int CantidadVendida { get; set; }
+    public int CantidadAquirida { get; set; }
 }
