@@ -13,15 +13,16 @@
 
                     <InputSelect class="form-control col-2" @bind-Value="filtro">
                         <option value="1">VentaId</option>
-                        <option value="2">Nombre</option>
-                        <option value="3">Apellido</option>
-                        <option value="4">Fecha</option>
-                        <option value="5">Telefono</option>
-                        <option value="6">Cedula</option>
-                        <option value="7">Direccion</option>
-                        <option value="8">DireccionVenta</option>
-                        <option value="9">Ciudad</option>
-                        <option value="10">Precio</option>
+                        <option value="2">Vehiculos</option>
+                        <option value="3">Nombre</option>
+                        <option value="4">Apellido</option>
+                        <option value="5">Fecha</option>
+                        <option value="6">Telefono</option>
+                        <option value="7">Cedula</option>
+                        <option value="8">Direccion</option>
+                        <option value="9">Direccion venta</option>
+                        <option value="10">Ciudad</option>
+                        <option value="11">Precio</option>
                     </InputSelect>
 
                     <div class="flex-fill mx-2">
@@ -43,13 +44,14 @@
                 <thead>
                     <tr>
                         <th>VentaId</th>
+                        <th>Vehiculos</th>
                         <th>Nombre</th>
                         <th>Apellido</th>
                         <th>Fecha</th>
                         <th>Telefono</th>
                         <th>Cedula</th>
                         <th>Direccion</th>
-                        <th>DireccionVenta</th>
+                        <th>Direccion venta</th>
                         <th>Ciudad</th>
                         <th>Precio</th>
                     </tr>
@@ -59,6 +61,7 @@
                     {
                         <tr>
                             <td>@item.VentaId</td>
+                            <td>@item.Vehiculos</td>
                             <td>@item.Nombre</td>
                             <td>@item.Apellido</td>
                             <td>@item.Fecha.ToString("dd/MM/yyyy")</td>

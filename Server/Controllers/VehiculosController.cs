@@ -1,11 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace DealerAutos.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-
     public class VehiculosController : ControllerBase
     {
         private readonly Context _context;
@@ -15,167 +17,56 @@ namespace DealerAutos.Server.Controllers
             _context = context;
         }
 
-        public bool Existe(int VehiculoId)
-        {
-            return (_context.Vehiculos?.Any(c => c.VehiculoId == VehiculoId)).GetValueOrDefault();
-        }
-
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Vehiculos>>> Obtener()
+        public async Task<ActionResult<IEnumerable<Vehiculos>>> GetVehiculos()
         {
-            if(_context.Vehiculos == null)
-            {
-                return NotFound();
-            }
-            else
-            {
-                
-                return await _context.Vehiculos.ToListAsync();
-            }
+            var vehiculos = await _context.Vehiculos.ToListAsync();
+
+            return Ok(vehiculos);
         }
 
-        [HttpGet("{Id}")]
-        public async Task<ActionResult<Vehiculos>> ObtenerVehiculos(int VehiculoId)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Vehiculos>> GetVehiculos(int id)
         {
-            if(_context.Vehiculos == null)
-            {
-                return NotFound();
-            }
-            
-            var vehiculo = await _context.Vehiculos.Include(c => c.VehiculosDetalles).Where(v => v.VehiculoId == VehiculoId).FirstOrDefaultAsync();
+            var vehiculos = await _context.Vehiculos.FindAsync(id);
 
-            if(vehiculo == null)
+            if (vehiculos == null)
             {
                 return NotFound();
             }
 
-            return vehiculo;
-        }
-
-        [HttpDelete("{Id}")]
-        public async Task<IActionResult> EliminarVehiculos(int VehiculoId)
-        {
-            var vehiculo = await _context.Vehiculos.Include(v => v.VehiculosDetalles).FirstOrDefaultAsync(v => v.VehiculoId == VehiculoId);
-
-            if(vehiculo == null)
-            {
-                return NotFound();
-            }
-
-            foreach(var MarcaVehiculo in vehiculo.VehiculosDetalles)
-            {
-                var marca = await _context.Marca.FindAsync(MarcaVehiculo.MarcaId);
-
-                if(marca != null)
-                {
-                    marca.Existencia -= MarcaVehiculo.CantidadAquirida;
-                    _context.Marca.Update(marca);
-                }
-            }
-
-            var marcaInicial = await _context.Marca.FindAsync(vehiculo.MarcaId);
-
-            if(marcaInicial != null)
-            {
-                marcaInicial.Existencia -= vehiculo.CantidadEnposesion;
-                _context.Marca.Update(marcaInicial);
-            }
-
-            _context.Vehiculos.Remove(vehiculo);
-            await _context.SaveChangesAsync();
-            return NoContent();
+            return Ok(vehiculos);
         }
 
         [HttpPost]
         public async Task<ActionResult<Vehiculos>> PostVehiculos(Vehiculos vehiculos)
         {
-            if(!Existe(vehiculos.VehiculoId))
+            if (vehiculos.VehiculoId == 0)
             {
-                Marca? marca = new Marca();
-
-                foreach(var MarcaVehiculo in vehiculos.VehiculosDetalles)
-                {
-                    marca = _context.Marca.Find(MarcaVehiculo.MarcaId);
-
-                    if(marca != null)
-                    {
-                        marca.Existencia += MarcaVehiculo.CantidadAquirida;
-                        _context.Marca.Update(marca);
-                        await _context.SaveChangesAsync();
-                        _context.Entry(marca).State = EntityState.Detached;
-                    }
-                }
-                await _context.Vehiculos.AddAsync(vehiculos);
+                _context.Vehiculos.Add(vehiculos);
             }
             else
             {
-                var vehiculoAnterior = _context.Vehiculos.Include(v => v.VehiculosDetalles).AsNoTracking()
-                .FirstOrDefault(v => v.VehiculoId == vehiculos.VehiculoId);
-
-                Marca? marca = new Marca();
-
-                if(vehiculoAnterior != null && vehiculoAnterior.VehiculosDetalles != null)
-                {
-                    foreach(var MarcaVehiculo in vehiculoAnterior.VehiculosDetalles)
-                    {
-                        if(MarcaVehiculo != null)
-                        {
-                            marca = _context.Marca.Find(MarcaVehiculo.VehiculoId);
-
-                            if(marca != null)
-                            {
-                                marca.Existencia -= MarcaVehiculo.CantidadAquirida;
-                                _context.Marca.Update(marca);
-                                await _context.SaveChangesAsync();
-                                _context.Entry(marca).State = EntityState.Detached;
-                            }
-                        }
-                    }
-                }
-
-                if(vehiculoAnterior != null)
-                {
-                    marca  = _context.Marca.Find(vehiculoAnterior.VehiculoId);
-
-                    if(marca != null)
-                    {
-                        marca.Existencia += vehiculoAnterior.CantidadEnposesion;
-                        _context.Marca.Update(marca);
-                        await _context.SaveChangesAsync();
-                        _context.Entry(marca).State = EntityState.Detached;
-                    }
-                }
-
-                _context.Database.ExecuteSql($"Delete from VehiculosDetalles where VehiculoId = {vehiculos.VehiculoId}");
-
-                foreach(var MarcaVehiculo in vehiculos.VehiculosDetalles)
-                {
-                    marca = _context.Marca.Find(MarcaVehiculo.MarcaId);
-
-                    if(marca != null)
-                    {
-                        marca.Existencia += MarcaVehiculo.CantidadAquirida;
-                        _context.Marca.Update(marca);
-                        await _context.SaveChangesAsync();
-                        _context.Entry(marca).State = EntityState.Detached;
-                        _context.Entry(MarcaVehiculo).State = EntityState.Added;
-                    }
-                }
-
-                marca = _context.Marca.Find(vehiculos.MarcaId);
-
-                if(marca != null)
-                {
-                    marca.Existencia -= vehiculos.CantidadEnposesion;
-                    _context.Marca.Update(marca);
-                    await _context.SaveChangesAsync();
-                    _context.Entry(marca).State = EntityState.Detached;
-                }
                 _context.Vehiculos.Update(vehiculos);
             }
+
             await _context.SaveChangesAsync();
-            _context.Entry(vehiculos).State = EntityState.Detached;
             return Ok(vehiculos);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteVehiculos(int id)
+        {
+            var vehiculos = await _context.Vehiculos.FindAsync(id);
+            if (vehiculos == null)
+            {
+                return NotFound();
+            }
+
+            _context.Vehiculos.Remove(vehiculos);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
         }
     }
 }

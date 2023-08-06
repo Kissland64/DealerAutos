@@ -1,5 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace DealerAutos.Server.Controllers
 {
@@ -19,12 +22,7 @@ namespace DealerAutos.Server.Controllers
         {
             var ventas = await _context.Ventas.ToListAsync();
 
-            if (ventas == null || ventas.Count == 0)
-            {
-                return NotFound();
-            }
-
-            return ventas;
+            return Ok(ventas);
         }
 
         [HttpGet("{id}")]
@@ -37,7 +35,7 @@ namespace DealerAutos.Server.Controllers
                 return NotFound();
             }
 
-            return ventas;
+            return Ok(ventas);
         }
 
         [HttpPost]
@@ -69,11 +67,6 @@ namespace DealerAutos.Server.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
-        }
-
-        private bool VentasExists(int id)
-        {
-            return _context.Ventas.Any(p => p.VentaId == id);
         }
     }
 }

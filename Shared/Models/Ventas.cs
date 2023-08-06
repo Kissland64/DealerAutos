@@ -5,6 +5,9 @@ public class Ventas{
     [Key]
 
     public int VentaId { get; set; }
+    
+    [Required(ErrorMessage = "Este campo es necesario")]
+    public string Vehiculos { get; set; } =string.Empty;
 
     [Required(ErrorMessage = "Este campo es necesario")]
     public string Nombre { get; set; } = string.Empty;

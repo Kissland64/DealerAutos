@@ -23,6 +23,12 @@
                 </div>
 
                 <div class="mb-3">
+                    <label class="form-label" for="Vehiculos">Vehiculos:</label>
+                    <InputText @bind-Value="ventas.Vehiculos" class="form-control" />
+                    <ValidationMessage For="@(() => ventas.Vehiculos)" />
+                </div>
+
+                <div class="mb-3">
                     <label class="form-label" for="Nombre">Nombre:</label>
                     <InputText @bind-Value="ventas.Nombre" class="form-control" />
                     <ValidationMessage For="@(() => ventas.Nombre)" />
@@ -41,13 +47,13 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label" for="Telefono">Telefono:</label>
+                    <label class="form-label" for="Telefono">Teléfono:</label>
                     <InputText @bind-Value="ventas.Telefono" class="form-control" />
                     <ValidationMessage For="@(() => ventas.Telefono)" />
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label" for="Cedula">Cedula:</label>
+                    <label class="form-label" for="Cedula">Cédula:</label>
                     <InputText @bind-Value="ventas.Cedula" class="form-control" />
                     <ValidationMessage For="@(() => ventas.Cedula)" />
                 </div>
@@ -59,7 +65,7 @@
                 </div>
                 
                 <div class="mb-3">
-                    <label class="form-label" for="DireccionVenta">DireccionVenta:</label>
+                    <label class="form-label" for="DireccionVenta">Direccion venta:</label>
                     <InputText @bind-Value="ventas.DireccionVenta" class="form-control" />
                     <ValidationMessage For="@(() => ventas.DireccionVenta)" />
                 </div>
@@ -221,7 +227,8 @@
 
     public bool Validar()
     {
-        return !string.IsNullOrEmpty(ventas.Nombre) &&
+        return !string.IsNullOrEmpty(ventas.Vehiculos) &&
+               !string.IsNullOrEmpty(ventas.Nombre) &&
                !string.IsNullOrEmpty(ventas.Apellido) &&
                !string.IsNullOrEmpty(ventas.Telefono) &&
                !string.IsNullOrEmpty(ventas.Cedula) &&
