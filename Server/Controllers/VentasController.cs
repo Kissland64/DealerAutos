@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace DealerAutos.Server.Controllers
+namespace DealerAutos.Client.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -18,7 +18,7 @@ namespace DealerAutos.Server.Controllers
 
         public bool Existe(int VentaId)
         {
-            return (_context.Ventas?.Any(c => c.VentaId == VentaId)).GetValueOrDefault();
+            return (_context.Ventas?.Any(v => v.VentaId == VentaId)).GetValueOrDefault();
         }
 
         [HttpGet]
@@ -34,40 +34,43 @@ namespace DealerAutos.Server.Controllers
             }
         }
 
-        [HttpGet("{VentasId}")]
-        public async Task<ActionResult<Ventas>> ObtenerVentas(int VentaId)
+        [HttpGet("{VentaId}")]
+        public async Task<ActionResult<Ventas>> ObtenerVenta(int VentaId)
         {
-            
             if(_context.Ventas == null)
             {
                 return NotFound();
             }
-            var ventas = await _context.Ventas.Include(e => e.VehiculosDetalles).Where( e => e.VentaId == VentaId).FirstOrDefaultAsync();
-            if(ventas == null)
+
+            var venta = await _context.Ventas.Include(v => v.VehiculosDetalles).Where(v => v.VentaId == VentaId).FirstOrDefaultAsync();
+
+            if(venta == null)
             {
                 return NotFound();
             }
-            foreach(var item in ventas.VehiculosDetalles)
+
+            foreach(var item in venta.VehiculosDetalles)
             {
                 Console.WriteLine($"{item.DetalleId}, {item.VentaId}, {item.VehiculoId}, {item.Precio}");
             }
 
-            return ventas;
+            return venta;
         }
-        
+
         [HttpPost]
         public async Task<ActionResult<Ventas>> PostVentas(Ventas ventas)
         {
             if(!Existe(ventas.VentaId))
             {
-                //Vehiculos? vehiculos = new Vehiculos();
+                Vehiculos? vehiculos = new Vehiculos();
+
                 foreach(var vehiculoAgotado in ventas.VehiculosDetalles)
                 {
-                   var vehiculos = _context.Vehiculos.Find(vehiculoAgotado.VehiculoId);
+                    vehiculos = _context.Vehiculos.Find(vehiculoAgotado.VehiculoId);
 
                     if(vehiculos != null)
                     {
-                        vehiculos.Existencia -= 1;
+                        vehiculos.Existencia -= vehiculoAgotado.Precio;
                         _context.Vehiculos.Update(vehiculos);
                         await _context.SaveChangesAsync();
                         _context.Entry(vehiculos).State = EntityState.Detached;
@@ -77,8 +80,8 @@ namespace DealerAutos.Server.Controllers
             }
             else
             {
-                var ventaAnterior = _context.Ventas.Include(e => e.VehiculosDetalles).AsNoTracking()
-                .FirstOrDefault(c => c.VentaId == ventas.VentaId);
+                var ventaAnterior = _context.Ventas.Include(v => v.VehiculosDetalles).AsNoTracking()
+                .FirstOrDefault(v => v.VentaId == ventas.VentaId);
 
                 Vehiculos? vehiculos = new Vehiculos();
 
@@ -92,16 +95,29 @@ namespace DealerAutos.Server.Controllers
 
                             if(vehiculos != null)
                             {
-                                vehiculos.Existencia +=  vehiculoAgotado.Precio;
+                                vehiculos.Existencia += vehiculoAgotado.Precio;
                                 _context.Vehiculos.Update(vehiculos);
                                 await _context.SaveChangesAsync();
                                 _context.Entry(vehiculos).State = EntityState.Detached;
-                            }   
+                            }
                         }
                     }
                 }
 
-                _context.Database.ExecuteSqlRaw($"Delete from ventaDetalle where VentaId = {ventas.VentaId}");
+                if(ventaAnterior != null)
+                {
+                    vehiculos  = _context.Vehiculos.Find(ventaAnterior.VentaId);
+
+                    if(vehiculos != null)
+                    {
+                        vehiculos.Existencia -= ventaAnterior.Total;
+                        _context.Vehiculos.Update(vehiculos);
+                        await _context.SaveChangesAsync();
+                        _context.Entry(vehiculos).State = EntityState.Detached;
+                    }
+                }
+
+                _context.Database.ExecuteSql($"Delete from VentasDetalle where VentaId = {ventas.VentaId}");
 
                 foreach(var vehiculoAgotado in ventas.VehiculosDetalles)
                 {
@@ -116,6 +132,16 @@ namespace DealerAutos.Server.Controllers
                         _context.Entry(vehiculoAgotado).State = EntityState.Added;
                     }
                 }
+
+                vehiculos = _context.Vehiculos.Find(ventas.VentaId);
+
+                if(vehiculos != null)
+                {
+                    vehiculos.Existencia += ventas.Total;
+                    _context.Vehiculos.Update(vehiculos);
+                    await _context.SaveChangesAsync();
+                    _context.Entry(vehiculos).State = EntityState.Detached;
+                }
                 _context.Ventas.Update(ventas);
             }
 
@@ -125,28 +151,36 @@ namespace DealerAutos.Server.Controllers
         }
 
         [HttpDelete("{VentaId}")]
-        public async Task<IActionResult> EliminarVentas(int VentaId)
+        public async Task<IActionResult> EliminarVenta(int VentaId)
         {
-            var ventas = await _context.Ventas.Include(e => e.VehiculosDetalles).FirstOrDefaultAsync(c => c.VentaId == VentaId);
+            var venta = await _context.Ventas.Include(v => v.VehiculosDetalles).FirstOrDefaultAsync(v => v.VentaId == VentaId);
 
-            if (ventas == null)
+            if(venta == null)
             {
                 return NotFound();
             }
 
-            foreach (var detalle in ventas.VehiculosDetalles)
+            foreach(var vehiculoAgotado in venta.VehiculosDetalles)
             {
-                var vehiculos = await _context.Vehiculos.FindAsync(detalle.VehiculoId);
+                var vehiculos = await _context.Vehiculos.FindAsync(vehiculoAgotado.VehiculoId);
 
-                if (vehiculos != null)
+                if(vehiculos != null)
                 {
-                    vehiculos.Existencia += detalle.Precio;
+                    vehiculos.Existencia += vehiculoAgotado.Precio;
                     _context.Vehiculos.Update(vehiculos);
                 }
             }
-            _context.Ventas.Remove(ventas);
-            await _context.SaveChangesAsync();
 
+            var vehiculoInicial = await _context.Vehiculos.FindAsync(venta.VentaId);
+
+            if(vehiculoInicial != null)
+            {
+                vehiculoInicial.Existencia += venta.Total;
+                _context.Vehiculos.Update(vehiculoInicial);
+            }
+
+            _context.Ventas.Remove(venta);
+            await _context.SaveChangesAsync();
             return NoContent();
         }
     }

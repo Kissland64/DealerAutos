@@ -16,9 +16,9 @@
                 <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 col-xl-4">
                     <label>Cliente Id:</label>
                     <div class="input-group mb-3">
-                        <InputNumber @bind-Value="ventas.VentaId" class="form-control" aria-describedby="Buscar" />
+                        <InputNumber @bind-Value="ventas.VentaId" class="form-control" aria-describedby="BotonBuscar" />
                         <button @onclick="Buscar" class="btn btn-outline-primary" 
-                        type="button" id="Buscar"><i class="oi oi-magnifying-glass"></i></button>
+                        type="button" id="BotonBuscar"><i class="oi oi-magnifying-glass"></i></button>
                     </div>
                 </div>
 
@@ -328,5 +328,10 @@
         Total = this.ventas.VehiculosDetalles.Sum(t => t.CantidadUtilizada);
         ventas.CantidadAdquirida = Total * 1;
         */
+    }
+
+    public string ObtenerModelo(int VehiculoId)
+    {
+        return L_Vehiculos.Where(a => a.VehiculoId == VehiculoId).FirstOrDefault().Modelo;
     }
 }
