@@ -3,7 +3,7 @@ Este proyecto fue creado a con la finalidad de hacer que en el proyecto se puede
 lamentablemente no pude complir con esos criterios, y lo que hice fue que el proyecto diera la cantidad total 
 de dinero ya sea si se esta comprando o vendiendo.
 
-Se le intento hacer un login que funciona tanto por cliente como administrador, pero hubo varios errores al momento
+Se le intento hacer un login que funcione tanto por cliente como administrador, pero hubo varios errores al momento
 de asignar cual era el rango necesario para poder acceder a ese registro ya sea administrador o cliente.
 
 El proyecto tiene un registro de ventas el cual proporciona una interfaz de usuario para registrar ventas de vehículos. 
