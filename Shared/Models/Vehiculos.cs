@@ -10,6 +10,8 @@ public class Vehiculos{
     [Required(ErrorMessage = "Este campo es necesario")]
     public string Marca { get; set; } = string.Empty;
 
+    public DateTime Fecha { get; set; } = DateTime.Now;
+
     [Required(ErrorMessage = "Este campo es necesario")]
     public string Modelo { get; set; } = string.Empty;
 

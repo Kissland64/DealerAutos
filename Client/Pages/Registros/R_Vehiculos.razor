@@ -1,0 +1,188 @@
+@page "/RegistroVehiculos"
+@page "/RegistroVehiculos/{VehiculoId:int}"
+@using DealerAutos.Client.Extensors;
+@inject NotificationService notificationService
+@inject HttpClient httpClient
+
+<EditForm Model="vehiculos" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+    <div class="container">
+        <div class="card shadow-lg">
+            <div class="card-header">
+                <h3>Registro de vehiculos.</h3>
+            </div>
+            <div class=card-body>
+                <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 col-xl-4">
+                    <label>Vehiculo Id:</label>
+                    <div class="input-group mb-3">
+                        <InputNumber @bind-Value="vehiculos.VehiculoId" class="form-control" aria-describedby="BotonBuscar" />
+                        <button @onclick="Buscar" class="btn btn-outline-primary" 
+                        type="button" id="BotonBuscar"><i class="oi oi-magnifying-glass"></i></button>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="Marca">Nombre:</label>
+                    <InputText @bind-Value="vehiculos.Marca" class="form-control" />
+                    <ValidationMessage For="@(() => vehiculos.Marca)" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="Fecha">Fecha:</label>
+                    <InputDate @bind-Value="vehiculos.Fecha" class="form-control" />
+                    <ValidationMessage For="@(() => vehiculos.Fecha)" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="Anio">Año:</label>
+                    <InputDate @bind-Value="vehiculos.Anio" class="form-control" />
+                    <ValidationMessage For="@(() => vehiculos.Anio)" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="Modelo">Modelo:</label>
+                    <InputText @bind-Value="vehiculos.Modelo" class="form-control" />
+                    <ValidationMessage For="@(() => vehiculos.Modelo)" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="Tipo">Tipo:</label>
+                    <InputText @bind-Value="vehiculos.Tipo" class="form-control" />
+                    <ValidationMessage For="@(() => vehiculos.Tipo)" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="Precio">Precio:</label>
+                    <InputNumber @bind-Value="vehiculos.Precio" class="form-control" />
+                    <ValidationMessage For="@(() => vehiculos.Precio)" />
+                </div>
+            </div>
+            <div class="card-footer d-flex justify-content-center">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-outline-primary" @onclick="Nuevo">Nuevo <i class="oi oi-file" /></button>
+                    <button type="submit" class="btn btn-outline-success">Guardar <i class="oi oi-document" /></button>
+                    <button type="button" class="btn btn-outline-danger" @onclick="Eliminar">Eliminar <i class="oi oi-trash" /></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</EditForm>
+<label>@Mensaje</label>
+@code {
+    [Parameter]
+    public int VehiculoId { get; set; }
+    public Vehiculos vehiculos { get; set; } = new Vehiculos();
+    public string Mensaje { get; set; } = string.Empty;
+    protected override async Task OnInitializedAsync()
+    {
+        if (VehiculoId > 0)
+        {
+            vehiculos.VehiculoId = VehiculoId;
+            await Buscar();
+        }
+    }
+    public async Task Buscar()
+    {
+        try
+        {
+            var vehiculoEncontrado = await httpClient.GetFromJsonAsync<Vehiculos>($"api/Vehiculos/{vehiculos.VehiculoId}");
+            if (vehiculoEncontrado != null)
+            {
+                vehiculos = vehiculoEncontrado;
+                StateHasChanged();
+
+                notificationService.ShowNotification(
+                    titulo: "Búsqueda exitosa",
+                    mensaje: "Se encontró el vehiculo.",
+                    NotificationSeverity.Success
+                );
+            }
+            else
+            {
+                notificationService.ShowNotification(
+                    titulo: "Error de búsqueda",
+                    mensaje: "Registro no encontrado",
+                    NotificationSeverity.Error
+                );
+            }
+        }
+        catch (Exception ex)
+        {
+            notificationService.ShowNotification(
+                titulo: "Error de búsqueda",
+                mensaje: ex.Message,
+                NotificationSeverity.Error
+            );
+        }
+    }
+    public async Task Guardar()
+    {
+        try
+        {
+            using var response = await httpClient.PostAsJsonAsync("api/Vehiculos", vehiculos);
+            response.EnsureSuccessStatusCode();
+            var exito = await response.Content.ReadFromJsonAsync<Vehiculos>();
+            if (exito != null)
+            {
+                vehiculos = exito;
+                StateHasChanged();
+                Nuevo();
+                notificationService.ShowNotification(
+                    titulo: "Éxito",
+                    mensaje: "Registro guardado",
+                    NotificationSeverity.Success
+                );
+            }
+            else
+            {
+                notificationService.ShowNotification(
+                    titulo: "Error",
+                    mensaje: "El registro no se guardó correctamente",
+                    NotificationSeverity.Error
+                );
+            }
+        }
+        catch (Exception ex)
+        {
+            notificationService.ShowNotification(
+                titulo: "Error",
+                mensaje: ex.Message,
+                NotificationSeverity.Error
+            );
+        }
+    }
+    public void Nuevo()
+    {
+        vehiculos = new Vehiculos();
+        Mensaje = string.Empty;
+
+        notificationService.ShowNotification(
+            titulo: "Nuevo formulario",
+            mensaje: "Se ha creado un nuevo formulario.",
+            NotificationSeverity.Info
+        );
+    }
+    public async Task Eliminar()
+    {
+        try
+        {
+            using var response = await httpClient.DeleteAsync($"api/Vehiculos/{vehiculos.VehiculoId}");
+            response.EnsureSuccessStatusCode();
+            Nuevo();
+            notificationService.ShowNotification(
+                titulo: "Eliminado",
+                mensaje: "El vehiculo se ha eliminado correctamente",
+                NotificationSeverity.Success
+            );
+        }
+        catch (Exception ex)
+        {
+            notificationService.ShowNotification(
+                titulo: "Error",
+                mensaje: ex.Message,
+                NotificationSeverity.Error
+            );
+        }
+    }
+    public bool Validar()
+    {
+        return !string.IsNullOrEmpty(vehiculos.Marca) &&
+               !string.IsNullOrEmpty(vehiculos.Modelo) &&
+               !string.IsNullOrEmpty(vehiculos.Tipo) &&
+               !string.IsNullOrEmpty(vehiculos.Anio);
+    }
+}

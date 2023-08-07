@@ -1,8 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace DealerAutos.Server.Controllers
 {
@@ -22,7 +19,12 @@ namespace DealerAutos.Server.Controllers
         {
             var vehiculos = await _context.Vehiculos.ToListAsync();
 
-            return Ok(vehiculos);
+            if (vehiculos == null || vehiculos.Count == 0)
+            {
+                return NotFound();
+            }
+
+            return vehiculos;
         }
 
         [HttpGet("{id}")]
@@ -35,7 +37,7 @@ namespace DealerAutos.Server.Controllers
                 return NotFound();
             }
 
-            return Ok(vehiculos);
+            return vehiculos;
         }
 
         [HttpPost]
