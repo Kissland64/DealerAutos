@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DealerAutos.Server.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20230807040334_Inicial")]
+    [Migration("20230807092747_Inicial")]
     partial class Inicial
     {
         /// <inheritdoc />

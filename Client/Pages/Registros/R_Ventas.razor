@@ -14,7 +14,7 @@
             </div>
             <div class=card-body>
                 <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 col-xl-4">
-                    <label>Cliente Id:</label>
+                    <label>Venta Id:</label>
                     <div class="input-group mb-3">
                         <InputNumber @bind-Value="ventas.VentaId" class="form-control" aria-describedby="BotonBuscar" />
                         <button @onclick="Buscar" class="btn btn-outline-primary" 
@@ -60,21 +60,15 @@
                 
                 <hr>
                 <fieldset>
-                    <legend>Utilizados:</legend>
+                    <legend>Lista de vehiculos:</legend>
                     <div class="row">
                         <div class="col-4">
                             <label for="SelectP">Vehiculos:</label>
-                            <RadzenDropDown class="form-control" Data="@L_Vehiculos.Where(p => p.VehiculoId != 5)" TextProperty="Modelo" ValueProperty="VehiculoId" @bind-Value="@vehiculosDetalles.VehiculoId"></RadzenDropDown>
-                        </div>
-                        @*
-                        <div class="col-4">
-                            <label for="CantidadP">Cantidad:</label>
-                            <div class="input-group">
-                                <input @bind="@vehiculosDetalles.CantidadUtilizada" type="Text" id="CantidadP" class="form-control" />
+                            <div class = "input-group">
+                                <RadzenDropDown class="form-control" Data="@L_Vehiculos.Where(p => p.VehiculoId != 5)" TextProperty="Modelo" ValueProperty="VehiculoId" @bind-Value="@vehiculosDetalles.VehiculoId"></RadzenDropDown>
+                                <button type="button" class="btn btn-dark" @onclick="AgregarDetalle">Agregar <i class="oi oi-plus" /></button> 
                             </div>
                         </div>
-                        *@
-                        <button type="button" class="btn btn-dark" @onclick="AgregarDetalle">Agregar <i class="oi oi-plus" /></button>
                     </div>
                     <table class="table">
                         <thead>
@@ -83,6 +77,7 @@
                                 <th>VehiculoId</th>
                                 <th>Modelo</th>
                                 <th>Marca</th>
+                                <th>Tipo</th>
                                 <th>Precio</th>
                             </tr>
                         </thead>
@@ -94,6 +89,7 @@
                                     <td>@item.VehiculoId</td>
                                     <td>@L_Vehiculos.FirstOrDefault(p => p.VehiculoId == item.VehiculoId)?.Modelo</td>
                                     <td>@L_Vehiculos.FirstOrDefault(p => p.VehiculoId == item.VehiculoId)?.Marca</td>
+                                    <td>@L_Vehiculos.FirstOrDefault(p => p.VehiculoId == item.VehiculoId)?.Tipo</td>
                                     <td>@item.Precio</td>
                                     <td>
                                         <button class="btn btn-danger mr-2" onclick="@(() => EliminarDetalle(item))"><i class="oi oi-trash"></i></button>
@@ -105,17 +101,13 @@
                     <hr>
                     <div class="row d-flex justify-content-center">
                         <div class="col-5">
-                            <label for="Total">Cantidades totales utilizadas:</label>
+                            <label for="Total">Cantidad total vendida:</label>
                             <input @bind-value="@Total" disabled="true" type="text" class="form-control" />
                         </div>
                     </div>
                 </fieldset>
                 <hr>
                 <fieldset>
-                        @*<div class="col-2">
-                           <input disabled @bind-value="@ventas.CantidadAdquirida" type="text" class="form-control" placeholder="Cantidad" />
-                        </div>*@
-                    
                 </fieldset>
 
             </div>
@@ -144,17 +136,12 @@
     
     protected override async Task OnInitializedAsync()
     {
-        if(VentaId > 0)
-        {
-            this.ventas.VentaId = VentaId;
-            await this.Buscar();
-        }
-        /*var vehiculos = await httpClient.GetFromJsonAsync<List<Vehiculos>>("api/Vehiculos");
+        var vehiculos = await httpClient.GetFromJsonAsync<List<Vehiculos>>("api/Vehiculos");
 
         if (vehiculos is not null)
         {
             L_Vehiculos = vehiculos;
-        }*/
+        }
     }
 
     public void Nuevo()
@@ -173,8 +160,6 @@
             if (ventaEncontrada != null)
             {
                 this.ventas = ventaEncontrada;
-                this.ventas.VehiculosDetalles = ventaEncontrada.VehiculosDetalles.ToList();
-                StateHasChanged();
             }
             else
             {
@@ -242,7 +227,7 @@
         else
         {
             Nuevo();
-            notificationService.ShowNotification(titulo: "Eliminado", mensaje: "El producto se ha eliminado correctamente", NotificationSeverity.Error);
+            notificationService.ShowNotification(titulo: "Eliminado", mensaje: "El vehiculo se ha eliminado correctamente", NotificationSeverity.Error);
         }
     }
 
@@ -328,10 +313,5 @@
         Total = this.ventas.VehiculosDetalles.Sum(t => t.CantidadUtilizada);
         ventas.CantidadAdquirida = Total * 1;
         */
-    }
-
-    public string ObtenerModelo(int VehiculoId)
-    {
-        return L_Vehiculos.Where(a => a.VehiculoId == VehiculoId).FirstOrDefault().Modelo;
     }
 }
