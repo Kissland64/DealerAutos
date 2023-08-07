@@ -7,84 +7,86 @@ namespace DealerAutos.Server.Controllers
     [Route("api/[controller]")]
     [ApiController]
 
-    public class VentasController : ControllerBase
+    public class ComprasController : ControllerBase
     {
         private readonly Context _context;
 
-        public VentasController(Context context)
+        public ComprasController(Context context)
         {
             _context = context;
         }
 
-        public bool Existe(int VentaId)
+        public bool Existe(int CompraId)
         {
-            return (_context.Ventas?.Any(c => c.VentaId == VentaId)).GetValueOrDefault();
+            return (_context.Compras?.Any(c => c.CompraId == CompraId)).GetValueOrDefault();
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Ventas>>> Obtener()
+        public async Task<ActionResult<IEnumerable<Compras>>> Obtener()
         {
-            if(_context.Ventas == null)
+            if(_context.Compras == null)
             {
                 return NotFound();
             }
             else
             {
-                return await _context.Ventas.ToListAsync();
+                return await _context.Compras.ToListAsync();
             }
         }
 
-        [HttpGet("{VentasId}")]
-        public async Task<ActionResult<Ventas>> ObtenerVentas(int VentaId)
+        [HttpGet("{CompraId}")]
+        public async Task<ActionResult<Compras>> ObtenerCompras(int CompraId)
         {
-            
-            if(_context.Ventas == null)
+            if(_context.Compras == null)
             {
                 return NotFound();
-            }
-            var ventas = await _context.Ventas.Include(e => e.VehiculosDetalles).Where( e => e.VentaId == VentaId).FirstOrDefaultAsync();
-            if(ventas == null)
-            {
-                return NotFound();
-            }
-            foreach(var item in ventas.VehiculosDetalles)
-            {
-                Console.WriteLine($"{item.DetalleId}, {item.VentaId}, {item.VehiculoId}, {item.Precio}");
             }
 
-            return ventas;
+            var Compras = await _context.Compras.Include(e => e.VehiculosDetalles).Where( e => e.CompraId == CompraId).FirstOrDefaultAsync();
+
+            if(Compras == null)
+            {
+                return NotFound();
+            }
+
+            foreach(var item in Compras.VehiculosDetalles)
+            {
+                Console.WriteLine($"{item.DetalleId}, {item.CompraId}, {item.VehiculoId}, {item.Cantidad}");
+            }
+
+            return Compras;
         }
         
         [HttpPost]
-        public async Task<ActionResult<Ventas>> PostVentas(Ventas ventas)
+        public async Task<ActionResult<Compras>> PostCompras(Compras compras)
         {
-            if(!Existe(ventas.VentaId))
+            if(!Existe(compras.CompraId))
             {
-                //Vehiculos? vehiculos = new Vehiculos();
-                foreach(var vehiculoAgotado in ventas.VehiculosDetalles)
+                Vehiculos? vehiculos = new Vehiculos();
+                foreach(var vehiculoAgotado in compras.VehiculosDetalles)
                 {
-                   var vehiculos = _context.Vehiculos.Find(vehiculoAgotado.VehiculoId);
+                    vehiculos = _context.Vehiculos.Find(vehiculoAgotado.VehiculoId);
 
                     if(vehiculos != null)
                     {
-                        vehiculos.Existencia -= 1;
+                        vehiculos.Existencia += vehiculoAgotado.Cantidad;
                         _context.Vehiculos.Update(vehiculos);
                         await _context.SaveChangesAsync();
                         _context.Entry(vehiculos).State = EntityState.Detached;
                     }
                 }
-                await _context.Ventas.AddAsync(ventas);
+                await _context.Vehiculos.AddAsync(vehiculos);
             }
             else
             {
-                var ventaAnterior = _context.Ventas.Include(e => e.VehiculosDetalles).AsNoTracking()
-                .FirstOrDefault(c => c.VentaId == ventas.VentaId);
+                var compraAnterior = _context.Compras.Include(e => e.VehiculosDetalles).AsNoTracking()
+                .FirstOrDefault(c => c.CompraId == compras.CompraId);
 
                 Vehiculos? vehiculos = new Vehiculos();
 
-                if(ventaAnterior != null && ventaAnterior.VehiculosDetalles != null)
+                if(compraAnterior != null && compraAnterior.VehiculosDetalles != null)
                 {
-                    foreach(var vehiculoAgotado in ventaAnterior.VehiculosDetalles)
+                    foreach(var vehiculoAgotado in compraAnterior.VehiculosDetalles)
                     {
                         if(vehiculoAgotado != null)
                         {
@@ -92,7 +94,7 @@ namespace DealerAutos.Server.Controllers
 
                             if(vehiculos != null)
                             {
-                                vehiculos.Existencia +=  vehiculoAgotado.Precio;
+                                vehiculos.Existencia -=  vehiculoAgotado.Cantidad;
                                 _context.Vehiculos.Update(vehiculos);
                                 await _context.SaveChangesAsync();
                                 _context.Entry(vehiculos).State = EntityState.Detached;
@@ -101,50 +103,50 @@ namespace DealerAutos.Server.Controllers
                     }
                 }
 
-                _context.Database.ExecuteSqlRaw($"Delete from ventaDetalle where VentaId = {ventas.VentaId}");
+                _context.Database.ExecuteSqlRaw($"Delete from compraDetalle where CompraId = {compras.CompraId}");
 
-                foreach(var vehiculoAgotado in ventas.VehiculosDetalles)
+                foreach(var vehiculoAgotado in compras.VehiculosDetalles)
                 {
                     vehiculos = _context.Vehiculos.Find(vehiculoAgotado.VehiculoId);
 
                     if(vehiculos != null)
                     {
-                        vehiculos.Existencia -= vehiculoAgotado.Precio;
+                        vehiculos.Existencia += vehiculoAgotado.Cantidad;
                         _context.Vehiculos.Update(vehiculos);
                         await _context.SaveChangesAsync();
                         _context.Entry(vehiculos).State = EntityState.Detached;
                         _context.Entry(vehiculoAgotado).State = EntityState.Added;
                     }
                 }
-                _context.Ventas.Update(ventas);
+                _context.Compras.Update(compras);
             }
 
             await _context.SaveChangesAsync();
-            _context.Entry(ventas).State = EntityState.Detached;
-            return Ok(ventas);
+            _context.Entry(compras).State = EntityState.Detached;
+            return Ok(compras);
         }
 
-        [HttpDelete("{VentaId}")]
-        public async Task<IActionResult> EliminarVentas(int VentaId)
+        [HttpDelete("{CompraId}")]
+        public async Task<IActionResult> EliminarCompras(int CompraId)
         {
-            var ventas = await _context.Ventas.Include(e => e.VehiculosDetalles).FirstOrDefaultAsync(c => c.VentaId == VentaId);
+            var compras = await _context.Compras.Include(e => e.VehiculosDetalles).FirstOrDefaultAsync(c => c.CompraId == CompraId);
 
-            if (ventas == null)
+            if (compras == null)
             {
                 return NotFound();
             }
 
-            foreach (var detalle in ventas.VehiculosDetalles)
+            foreach (var detalle in compras.VehiculosDetalles)
             {
                 var vehiculos = await _context.Vehiculos.FindAsync(detalle.VehiculoId);
 
                 if (vehiculos != null)
                 {
-                    vehiculos.Existencia += detalle.Precio;
+                    vehiculos.Existencia -= detalle.Cantidad;
                     _context.Vehiculos.Update(vehiculos);
                 }
             }
-            _context.Ventas.Remove(ventas);
+            _context.Compras.Remove(compras);
             await _context.SaveChangesAsync();
 
             return NoContent();

@@ -24,6 +24,8 @@ public class Clientes
     [Required(ErrorMessage = "Este campo es necesario")]
     public string Direccion { get; set; } = string.Empty;
 
-    [ForeignKey("VehiculoId")]
-    public ICollection<VehiculosDetalles> VehiculosDetalles { get; set; } = new List<VehiculosDetalles>();
-}
+    [Required(ErrorMessage = "Este campo es necesario")]
+    public double CantidadAdquirida { get; set; }
+
+    public int VehiculoId { get; set;}
+}   

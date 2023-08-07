@@ -26,6 +26,9 @@ namespace DealerAutos.Server.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<double>("CantidadAdquirida")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("Cedula")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -45,9 +48,37 @@ namespace DealerAutos.Server.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("VehiculoId")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("ClienteId");
 
                     b.ToTable("Clientes");
+                });
+
+            modelBuilder.Entity("CompraDetalles", b =>
+                {
+                    b.Property<int>("DetalleId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double>("Cantidad")
+                        .HasColumnType("REAL");
+
+                    b.Property<int>("CompraId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double>("Precio")
+                        .HasColumnType("REAL");
+
+                    b.Property<int>("VehiculoId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("DetalleId");
+
+                    b.HasIndex("CompraId");
+
+                    b.ToTable("CompraDetalles");
                 });
 
             modelBuilder.Entity("Compras", b =>
@@ -71,12 +102,12 @@ namespace DealerAutos.Server.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<double>("Precio")
-                        .HasColumnType("REAL");
-
                     b.Property<string>("Tipo")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<double>("Total")
+                        .HasColumnType("REAL");
 
                     b.HasKey("CompraId");
 
@@ -296,14 +327,8 @@ namespace DealerAutos.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("CantidadVendida")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("ClienteId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("CompraId")
-                        .HasColumnType("INTEGER");
+                    b.Property<double>("Precio")
+                        .HasColumnType("REAL");
 
                     b.Property<int>("VehiculoId")
                         .HasColumnType("INTEGER");
@@ -313,7 +338,7 @@ namespace DealerAutos.Server.Migrations
 
                     b.HasKey("DetalleId");
 
-                    b.HasIndex("VehiculoId");
+                    b.HasIndex("VentaId");
 
                     b.ToTable("VehiculosDetalles");
                 });
@@ -332,15 +357,7 @@ namespace DealerAutos.Server.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Ciudad")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Direccion")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("DireccionVenta")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -351,32 +368,42 @@ namespace DealerAutos.Server.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<double>("Precio")
-                        .HasColumnType("REAL");
-
                     b.Property<string>("Telefono")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Vehiculos")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<double>("Total")
+                        .HasColumnType("REAL");
 
                     b.HasKey("VentaId");
 
                     b.ToTable("Ventas");
                 });
 
-            modelBuilder.Entity("VehiculosDetalles", b =>
+            modelBuilder.Entity("CompraDetalles", b =>
                 {
-                    b.HasOne("Clientes", null)
+                    b.HasOne("Compras", null)
                         .WithMany("VehiculosDetalles")
-                        .HasForeignKey("VehiculoId")
+                        .HasForeignKey("CompraId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Clientes", b =>
+            modelBuilder.Entity("VehiculosDetalles", b =>
+                {
+                    b.HasOne("Ventas", null)
+                        .WithMany("VehiculosDetalles")
+                        .HasForeignKey("VentaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Compras", b =>
+                {
+                    b.Navigation("VehiculosDetalles");
+                });
+
+            modelBuilder.Entity("Ventas", b =>
                 {
                     b.Navigation("VehiculosDetalles");
                 });

@@ -1,13 +1,11 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 public class Ventas{
     
     [Key]
 
     public int VentaId { get; set; }
-    
-    [Required(ErrorMessage = "Este campo es necesario")]
-    public string Vehiculos { get; set; } =string.Empty;
 
     [Required(ErrorMessage = "Este campo es necesario")]
     public string Nombre { get; set; } = string.Empty;
@@ -27,11 +25,8 @@ public class Ventas{
     public string Direccion { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Este campo es necesario")]
-    public string DireccionVenta { get; set;} = string.Empty;
-    
-    [Required(ErrorMessage = "Este campo es necesario")]
-    public string Ciudad { get; set; } = string.Empty;
+    public double Total { get; set; }
 
-    [Required(ErrorMessage = "Este campo es necesario")]
-    public double Precio { get; set; }
+    [ForeignKey("VentaId")]
+    public ICollection<VehiculosDetalles> VehiculosDetalles { get; set; } = new List<VehiculosDetalles>();
 }

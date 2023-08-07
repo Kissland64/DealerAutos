@@ -24,7 +24,9 @@ namespace DealerAutos.Server.Migrations
                     Apellido = table.Column<string>(type: "TEXT", nullable: false),
                     Cedula = table.Column<string>(type: "TEXT", nullable: false),
                     Telefono = table.Column<string>(type: "TEXT", nullable: false),
-                    Direccion = table.Column<string>(type: "TEXT", nullable: false)
+                    Direccion = table.Column<string>(type: "TEXT", nullable: false),
+                    CantidadAdquirida = table.Column<double>(type: "REAL", nullable: false),
+                    VehiculoId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -42,7 +44,7 @@ namespace DealerAutos.Server.Migrations
                     Marca = table.Column<string>(type: "TEXT", nullable: false),
                     Modelo = table.Column<string>(type: "TEXT", nullable: false),
                     Tipo = table.Column<string>(type: "TEXT", nullable: false),
-                    Precio = table.Column<double>(type: "REAL", nullable: false)
+                    Total = table.Column<double>(type: "REAL", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -101,20 +103,39 @@ namespace DealerAutos.Server.Migrations
                 {
                     VentaId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Vehiculos = table.Column<string>(type: "TEXT", nullable: false),
                     Nombre = table.Column<string>(type: "TEXT", nullable: false),
                     Apellido = table.Column<string>(type: "TEXT", nullable: false),
                     Fecha = table.Column<DateTime>(type: "TEXT", nullable: false),
                     Telefono = table.Column<string>(type: "TEXT", nullable: false),
                     Cedula = table.Column<string>(type: "TEXT", nullable: false),
                     Direccion = table.Column<string>(type: "TEXT", nullable: false),
-                    DireccionVenta = table.Column<string>(type: "TEXT", nullable: false),
-                    Ciudad = table.Column<string>(type: "TEXT", nullable: false),
-                    Precio = table.Column<double>(type: "REAL", nullable: false)
+                    Total = table.Column<double>(type: "REAL", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Ventas", x => x.VentaId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CompraDetalles",
+                columns: table => new
+                {
+                    DetalleId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    CompraId = table.Column<int>(type: "INTEGER", nullable: false),
+                    VehiculoId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Precio = table.Column<double>(type: "REAL", nullable: false),
+                    Cantidad = table.Column<double>(type: "REAL", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CompraDetalles", x => x.DetalleId);
+                    table.ForeignKey(
+                        name: "FK_CompraDetalles_Compras_CompraId",
+                        column: x => x.CompraId,
+                        principalTable: "Compras",
+                        principalColumn: "CompraId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -125,18 +146,16 @@ namespace DealerAutos.Server.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     VentaId = table.Column<int>(type: "INTEGER", nullable: false),
                     VehiculoId = table.Column<int>(type: "INTEGER", nullable: false),
-                    ClienteId = table.Column<int>(type: "INTEGER", nullable: false),
-                    CompraId = table.Column<int>(type: "INTEGER", nullable: false),
-                    CantidadVendida = table.Column<int>(type: "INTEGER", nullable: false)
+                    Precio = table.Column<double>(type: "REAL", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_VehiculosDetalles", x => x.DetalleId);
                     table.ForeignKey(
-                        name: "FK_VehiculosDetalles_Clientes_VehiculoId",
-                        column: x => x.VehiculoId,
-                        principalTable: "Clientes",
-                        principalColumn: "ClienteId",
+                        name: "FK_VehiculosDetalles_Ventas_VentaId",
+                        column: x => x.VentaId,
+                        principalTable: "Ventas",
+                        principalColumn: "VentaId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -158,16 +177,24 @@ namespace DealerAutos.Server.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_VehiculosDetalles_VehiculoId",
+                name: "IX_CompraDetalles_CompraId",
+                table: "CompraDetalles",
+                column: "CompraId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_VehiculosDetalles_VentaId",
                 table: "VehiculosDetalles",
-                column: "VehiculoId");
+                column: "VentaId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Compras");
+                name: "Clientes");
+
+            migrationBuilder.DropTable(
+                name: "CompraDetalles");
 
             migrationBuilder.DropTable(
                 name: "LoginDTO");
@@ -182,10 +209,10 @@ namespace DealerAutos.Server.Migrations
                 name: "VehiculosDetalles");
 
             migrationBuilder.DropTable(
-                name: "Ventas");
+                name: "Compras");
 
             migrationBuilder.DropTable(
-                name: "Clientes");
+                name: "Ventas");
         }
     }
 }

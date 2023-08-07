@@ -1,8 +1,8 @@
-@page "/RegistroVentas"
-@page "/RegistroVentas/{VentaId:int}"
-@using DealerAutos.Client.Extensors;
-@inject NotificationService notificationService
+@page "/VentaVehiculos"
+@page "/VentaVehiculos/{VentaId:int}"
+@using DealerAutos.Client.Extensors
 @inject HttpClient httpClient
+@inject NotificationService notificationService
 
 <EditForm Model="ventas" OnValidSubmit="Guardar">
     <DataAnnotationsValidator />
@@ -14,140 +14,188 @@
             </div>
             <div class=card-body>
                 <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 col-xl-4">
-                    <label>Venta Id:</label>
+                    <label>Cliente Id:</label>
                     <div class="input-group mb-3">
-                        <InputNumber @bind-Value="ventas.VentaId" class="form-control" aria-describedby="BotonBuscar" />
+                        <InputNumber @bind-Value="ventas.VentaId" class="form-control" aria-describedby="Buscar" />
                         <button @onclick="Buscar" class="btn btn-outline-primary" 
-                        type="button" id="BotonBuscar"><i class="oi oi-magnifying-glass"></i></button>
+                        type="button" id="Buscar"><i class="oi oi-magnifying-glass"></i></button>
                     </div>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label" for="Vehiculos">Vehiculos:</label>
-                    <InputText @bind-Value="ventas.Vehiculos" class="form-control" />
-                    <ValidationMessage For="@(() => ventas.Vehiculos)" />
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label" for="Nombre">Nombre:</label>
-                    <InputText @bind-Value="ventas.Nombre" class="form-control" />
-                    <ValidationMessage For="@(() => ventas.Nombre)" />
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label" for="Apellido">Apellido:</label>
-                    <InputText @bind-Value="ventas.Apellido" class="form-control" />
-                    <ValidationMessage For="@(() => ventas.Apellido)" />
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label" for="Fecha">Fecha:</label>
                     <InputDate @bind-Value="ventas.Fecha" class="form-control" />
-                    <ValidationMessage For="@(() => ventas.Fecha)" />
+                    <ValidationMessage For="() => ventas.Fecha" />
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label" for="Telefono">Teléfono:</label>
-                    <InputText @bind-Value="ventas.Telefono" class="form-control" />
-                    <ValidationMessage For="@(() => ventas.Telefono)" />
+                    <label class="form-label" for="Nombre">Nombre:</label>
+                    <InputText @bind-Value="ventas.Nombre" class="form-control" />
+                    <ValidationMessage For="() => ventas.Nombre" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="Apellido">Apellido:</label>
+                    <InputText @bind-Value="ventas.Apellido" class="form-control" />
+                    <ValidationMessage For="() => ventas.Apellido" />
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label" for="Cedula">Cédula:</label>
                     <InputText @bind-Value="ventas.Cedula" class="form-control" />
-                    <ValidationMessage For="@(() => ventas.Cedula)" />
+                    <ValidationMessage For="() => ventas.Cedula" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="Telefono">Telefono:</label>
+                    <InputText @bind-Value="ventas.Telefono" class="form-control" />
+                    <ValidationMessage For="() => ventas.Telefono" />
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label" for="Direccion">Direccion:</label>
                     <InputText @bind-Value="ventas.Direccion" class="form-control" />
-                    <ValidationMessage For="@(() => ventas.Direccion)" />
+                    <ValidationMessage For="() => ventas.Direccion" />
                 </div>
                 
-                <div class="mb-3">
-                    <label class="form-label" for="DireccionVenta">Direccion venta:</label>
-                    <InputText @bind-Value="ventas.DireccionVenta" class="form-control" />
-                    <ValidationMessage For="@(() => ventas.DireccionVenta)" />
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label" for="Ciudad">Ciudad:</label>
-                    <InputText @bind-Value="ventas.Ciudad" class="form-control" />
-                    <ValidationMessage For="@(() => ventas.Ciudad)" />
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label" for="Precio">Precio:</label>
-                    <InputNumber @bind-Value="ventas.Precio" class="form-control" />
-                    <ValidationMessage For="@(() => ventas.Precio)" />
-                </div>
+                <hr>
+                <fieldset>
+                    <legend>Utilizados:</legend>
+                    <div class="row">
+                        <div class="col-4">
+                            <label for="SelectP">Vehiculos:</label>
+                            <RadzenDropDown class="form-control" Data="@L_Vehiculos.Where(p => p.VehiculoId != 5)" TextProperty="Modelo" ValueProperty="VehiculoId" @bind-Value="@vehiculosDetalles.VehiculoId"></RadzenDropDown>
+                        </div>
+                        @*
+                        <div class="col-4">
+                            <label for="CantidadP">Cantidad:</label>
+                            <div class="input-group">
+                                <input @bind="@vehiculosDetalles.CantidadUtilizada" type="Text" id="CantidadP" class="form-control" />
+                            </div>
+                        </div>
+                        *@
+                        <button type="button" class="btn btn-dark" @onclick="AgregarDetalle">Agregar <i class="oi oi-plus" /></button>
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Imagen</th>
+                                <th>VehiculoId</th>
+                                <th>Modelo</th>
+                                <th>Marca</th>
+                                <th>Precio</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in ventas.VehiculosDetalles)
+                            {
+                                <tr>
+                                    <td><img src="@L_Vehiculos.FirstOrDefault(p => p.VehiculoId == item.VehiculoId)?.Imagen" width="60px" height="60px" /></td>
+                                    <td>@item.VehiculoId</td>
+                                    <td>@L_Vehiculos.FirstOrDefault(p => p.VehiculoId == item.VehiculoId)?.Modelo</td>
+                                    <td>@L_Vehiculos.FirstOrDefault(p => p.VehiculoId == item.VehiculoId)?.Marca</td>
+                                    <td>@item.Precio</td>
+                                    <td>
+                                        <button class="btn btn-danger mr-2" onclick="@(() => EliminarDetalle(item))"><i class="oi oi-trash"></i></button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <hr>
+                    <div class="row d-flex justify-content-center">
+                        <div class="col-5">
+                            <label for="Total">Cantidades totales utilizadas:</label>
+                            <input @bind-value="@Total" disabled="true" type="text" class="form-control" />
+                        </div>
+                    </div>
+                </fieldset>
+                <hr>
+                <fieldset>
+                        @*<div class="col-2">
+                           <input disabled @bind-value="@ventas.CantidadAdquirida" type="text" class="form-control" placeholder="Cantidad" />
+                        </div>*@
+                    
+                </fieldset>
 
             </div>
             <div class="card-footer d-flex justify-content-center">
                 <div class="btn-group">
-                    <button type="button" class="btn btn-outline-primary" @onclick="Nuevo">Nuevo <i class="oi oi-file" /></button>
-                    <button type="submit" class="btn btn-outline-success">Guardar <i class="oi oi-document" /></button>
-                    <button type="button" class="btn btn-outline-danger" @onclick="Eliminar">Eliminar <i class="oi oi-trash" /></button>
+                    <button type="button" class="btn btn-outline-primary" @onclick="Nuevo">Nuevo <i class="oi oi-file"></i></button>
+                    <button type="submit" class="btn btn-outline-success">Guardar <i class="oi oi-document"></i></button>
+                    <button type="button" class="btn btn-outline-danger" @onclick="Eliminar">Eliminar <i class="oi oi-trash"></i></button>
                 </div>
             </div>
         </div>
     </div>
-
-
 </EditForm>
 <label>@Mensaje</label>
 
 @code {
-
     [Parameter]
-
     public int VentaId { get; set; }
-
+    public int VehiculoId { get; set; }
     public Ventas ventas { get; set; } = new Ventas();
-
+    public VehiculosDetalles vehiculosDetalles { get; set; } = new VehiculosDetalles();
     public string Mensaje { get; set; } = string.Empty;
-
+    public int Total { get; set; } = 0;
+    public int Cantidad { get; set; }
+    public List<Vehiculos> L_Vehiculos { get; set; } = new List<Vehiculos>();
+    
     protected override async Task OnInitializedAsync()
     {
-        if (VentaId > 0)
+        if(VentaId > 0)
         {
-            ventas.VentaId = VentaId;
-            await Buscar();
+            this.ventas.VentaId = VentaId;
+            await this.Buscar();
         }
+        /*var vehiculos = await httpClient.GetFromJsonAsync<List<Vehiculos>>("api/Vehiculos");
+
+        if (vehiculos is not null)
+        {
+            L_Vehiculos = vehiculos;
+        }*/
     }
 
+    public void Nuevo()
+    {
+        this.ventas = new Ventas();
+        Total = 0;
+        Mensaje = string.Empty;
+    }
+    
     public async Task Buscar()
     {
         try
         {
+            int Suma = 0;
             var ventaEncontrada = await httpClient.GetFromJsonAsync<Ventas>($"api/Ventas/{ventas.VentaId}");
             if (ventaEncontrada != null)
             {
-                ventas = ventaEncontrada;
+                this.ventas = ventaEncontrada;
+                this.ventas.VehiculosDetalles = ventaEncontrada.VehiculosDetalles.ToList();
                 StateHasChanged();
-
-                notificationService.ShowNotification(
-                    titulo: "Búsqueda exitosa",
-                    mensaje: "Se encontró la venta.",
-                    NotificationSeverity.Success
-                );
             }
             else
             {
                 notificationService.ShowNotification(
                     titulo: "Error de búsqueda",
-                    mensaje: "Registro no encontrado",
-                    NotificationSeverity.Error
-                );
+                    mensaje: "Formulario no encontrado",
+                    NotificationSeverity.Error);
             }
+            foreach (var item in ventas.VehiculosDetalles)
+            {
+                //Suma += item.CantidadUtilizada;
+                Total = Suma;
+            }           
         }
-        catch (Exception ex)
+        catch(Exception ex)
         {
             notificationService.ShowNotification(
-                titulo: "Error de búsqueda",
-                mensaje: ex.Message,
-                NotificationSeverity.Error
-            );
+                    titulo: "Error de búsqueda",
+                    mensaje: "Formulario no encontrado",
+                    NotificationSeverity.Error);
+
         }
     }
 
@@ -158,82 +206,127 @@
             using var response = await httpClient.PostAsJsonAsync("api/Ventas", ventas);
             response.EnsureSuccessStatusCode();
 
-            var exito = await response.Content.ReadFromJsonAsync<Ventas>();
-            if (exito != null)
+            if(response.IsSuccessStatusCode)
             {
-                ventas = exito;
-                StateHasChanged();
-                Nuevo();
+                
+                var ventaDevuelta = await response.Content.ReadFromJsonAsync<Ventas>();
+            if (ventaDevuelta != null)
+            {
                 notificationService.ShowNotification(
                     titulo: "Éxito",
-                    mensaje: "Registro guardado",
-                    NotificationSeverity.Success
-                );
+                    mensaje: "Guardado correctamente",
+                    NotificationSeverity.Success);
+
             }
-            else
-            {
-                notificationService.ShowNotification(
-                    titulo: "Error",
-                    mensaje: "El registro no se guardó correctamente",
-                    NotificationSeverity.Error
-                );
+                this.ventas = ventaDevuelta;
             }
         }
         catch (Exception ex)
         {
             notificationService.ShowNotification(
-                titulo: "Error",
+                titulo: "Error al guardar",
                 mensaje: ex.Message,
-                NotificationSeverity.Error
-            );
+                NotificationSeverity.Error);
         }
-    }
-
-    public void Nuevo()
-    {
-        ventas = new Ventas();
-        Mensaje = string.Empty;
-
-        notificationService.ShowNotification(
-            titulo: "Nueva venta",
-            mensaje: "Se ha creado una nueva venta.",
-            NotificationSeverity.Info
-        );
     }
 
     public async Task Eliminar()
     {
-        try
-        {
-            using var response = await httpClient.DeleteAsync($"api/Ventas/{ventas.VentaId}");
-            response.EnsureSuccessStatusCode();
+        using var response = await httpClient.DeleteAsync($"api/Ventas/{ventas.VentaId}");
 
-            Nuevo();
-            notificationService.ShowNotification(
-                titulo: "Eliminado",
-                mensaje: "La venta se ha eliminado correctamente",
-                NotificationSeverity.Success
-            );
-        }
-        catch (Exception ex)
+        if(!response.IsSuccessStatusCode)
         {
-            notificationService.ShowNotification(
-                titulo: "Error",
-                mensaje: ex.Message,
-                NotificationSeverity.Error
-            );
+            notificationService.ShowNotification(titulo: "No eliminado", mensaje: "No hay nada por eliminar", NotificationSeverity.Warning);
+            return;
+        }
+        else
+        {
+            Nuevo();
+            notificationService.ShowNotification(titulo: "Eliminado", mensaje: "El producto se ha eliminado correctamente", NotificationSeverity.Error);
         }
     }
 
     public bool Validar()
     {
-        return !string.IsNullOrEmpty(ventas.Vehiculos) &&
+        return 
                !string.IsNullOrEmpty(ventas.Nombre) &&
                !string.IsNullOrEmpty(ventas.Apellido) &&
                !string.IsNullOrEmpty(ventas.Telefono) &&
                !string.IsNullOrEmpty(ventas.Cedula) &&
-               !string.IsNullOrEmpty(ventas.Direccion) &&
-               !string.IsNullOrEmpty(ventas.DireccionVenta) &&
-               !string.IsNullOrEmpty(ventas.Ciudad);
+               !string.IsNullOrEmpty(ventas.Direccion);
+    }
+
+    public bool ValidarDetalle()
+    {
+        if (vehiculosDetalles.VehiculoId < 0)
+        {
+            return false;
+        }
+        /*if (vehiculosDetalles.CantidadUtilizada < 0)
+        {
+            return false;
+        }*/
+        else
+        {
+            return true;
+        }
+    }
+
+    private async Task<Vehiculos> BuscarVentas(int VehiculoId)
+    {
+        var vehiculos = await httpClient.GetFromJsonAsync<Vehiculos>($"api/Vehiculos/{VehiculoId}");
+
+        if(vehiculos == null)
+        {
+            return new Vehiculos();
+        }
+
+        return vehiculos;
+    }
+    
+    public async Task AgregarDetalle()
+    {
+        if(ValidarDetalle())
+        {
+            /*if(vehiculosDetalles.CantidadUtilizada <= 0)
+            {
+                notificationService.ShowNotification(titulo: "Error", mensaje: "La cantidad a utilizar debe ser mayor que cero", NotificationSeverity.Warning);
+                return;
+            }*/
+
+            var vehiculos = await httpClient.GetFromJsonAsync<Vehiculos>($"api/Vehiculos/{vehiculosDetalles.VehiculoId}");
+
+            if(vehiculos != null)
+            {
+                int Suma = 0;
+
+                /*if(vehiculosDetalles.CantidadUtilizada > vehiculos.Existencia)
+                {
+                    notificationService.ShowNotification(titulo: "Error", mensaje: "La cantidad a utilizar es mayor que la existencia del producto", NotificationSeverity.Warning);
+                    return;
+                }*/
+
+                vehiculosDetalles.Precio = vehiculos.Precio;
+                vehiculosDetalles.VentaId = ventas.VentaId;
+                ventas.VehiculosDetalles.Add(vehiculosDetalles);
+                vehiculosDetalles = new VehiculosDetalles();
+
+               /* foreach (var item in ventas.VehiculosDetalles)
+                {
+                    Suma += item.CantidadUtilizada;
+                    Total = Suma;
+                }
+                ventas.CantidadAdquirida = Total * 2;*/
+            }
+        }
+    }
+    
+    public void EliminarDetalle(VehiculosDetalles vehiculosDetalles)
+    {
+        this.ventas.VehiculosDetalles.Remove(vehiculosDetalles);
+        /*
+        Total = this.ventas.VehiculosDetalles.Sum(t => t.CantidadUtilizada);
+        ventas.CantidadAdquirida = Total * 1;
+        */
     }
 }
