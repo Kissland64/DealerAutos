@@ -1,167 +1,185 @@
 using Microsoft.AspNetCore.Mvc;
-using System;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
-using DealerAutos.Shared;
+using System.Threading.Tasks;
 
-[Route("api/[controller]")]
-[ApiController]
-public class ClientesController : ControllerBase
+namespace DealerAutos.Server.Controllers
 {
-    private readonly Context _contexto;
-
-    public ClientesController(Context contexto)
+    [Route("api/[controller]")]
+    [ApiController]
+    public class ClientesController : ControllerBase
     {
-        _contexto = contexto;
-    }
+        private readonly Context _context;
 
-    [HttpGet]
-    public ActionResult<IEnumerable<Clientes>> ObtenerClientes()
-    {
-
-        var clientes = _contexto.Clientes.ToList();
-        return Ok(clientes);
-    }
-
-    [HttpGet("{id}")]
-    public ActionResult<Clientes> ObtenerClientePorId(int id)
-    {
-        var cliente = _contexto.Clientes.Find(id);
-        if (cliente == null)
+        public ClientesController(Context context)
         {
-            return NotFound();
-        }
-        return Ok(cliente);
-    }
-
-    [HttpPost]
-    public ActionResult<Clientes> AgregarCliente(Clientes cliente)
-    {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-        _contexto.Clientes.Add(cliente);
-        _contexto.SaveChanges();
-        return CreatedAtAction(nameof(ObtenerClientePorId), new { id = cliente.ClienteId }, cliente);
-    }
-
-    [HttpPut("{id}")]
-    public ActionResult ActualizarCliente(int id, Clientes cliente)
-    {
-        if (id != cliente.ClienteId)
-        {
-            return BadRequest();
+            _context = context;
         }
 
-        var clienteExistente = _contexto.Clientes.Find(id);
-        if (clienteExistente == null)
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Clientes>>> ObtenerClientes()
         {
-            return NotFound();
-        }
-        _contexto.SaveChanges();
-        return NoContent();
-    }
-
-    [HttpDelete("{id}")]
-    public ActionResult EliminarCliente(int id)
-    {
-        var cliente = _contexto.Clientes.Find(id);
-        if (cliente == null)
-        {
-            return NotFound();
+            return await _context.Clientes.Include(c => c.VehiculosDetalles).ToListAsync();
         }
 
-        _contexto.Clientes.Remove(cliente);
-        _contexto.SaveChanges();
-        return NoContent();
-    }
-
-    [HttpGet("{clienteId}/Vehiculos")]
-    public ActionResult<IEnumerable<Vehiculos>> ObtenerVehiculosPorCliente(int clienteId)
-    {
-        var cliente = _contexto.Clientes.Find(clienteId);
-        if (cliente == null)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Clientes>> ObtenerClientePorId(int id)
         {
-            return NotFound();
+            var cliente = await _context.Clientes.Include(c => c.VehiculosDetalles).FirstOrDefaultAsync(c => c.ClienteId == id);
+
+            if (cliente == null)
+            {
+                return NotFound();
+            }
+
+            return cliente;
         }
 
-        var vehiculos = cliente.VehiculosDetalles.ToList();
-        return Ok(vehiculos);
-    }
-
-    [HttpGet("{clienteId}/Vehiculos/{vehiculoId}")]
-    public ActionResult<VehiculosDetalles> ObtenerVehiculoPorId(int clienteId, int vehiculoId)
-    {
-        var cliente = _contexto.Clientes.Find(clienteId);
-        if (cliente == null)
+        [HttpPost]
+        public async Task<ActionResult<Clientes>> AgregarCliente(Clientes cliente)
         {
-            return NotFound();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            _context.Clientes.Add(cliente);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(ObtenerClientePorId), new { id = cliente.ClienteId }, cliente);
         }
 
-        var vehiculo = cliente.VehiculosDetalles.FirstOrDefault(v => v.VehiculoId == vehiculoId);
-        if (vehiculo == null)
+        [HttpPut("{id}")]
+        public async Task<ActionResult> ActualizarCliente(int id, Clientes cliente)
         {
-            return NotFound();
+            if (id != cliente.ClienteId)
+            {
+                return BadRequest();
+            }
+
+            var clienteExistente = await _context.Clientes.FindAsync(id);
+            if (clienteExistente == null)
+            {
+                return NotFound();
+            }
+
+            _context.Entry(clienteExistente).CurrentValues.SetValues(cliente);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
         }
 
-        return Ok(vehiculo);
-    }
-
-    [HttpPost("{clienteId}/Vehiculos")]
-    public ActionResult<VehiculosDetalles> AgregarVehiculo(int clienteId, VehiculosDetalles vehiculo)
-    {
-        var cliente = _contexto.Clientes.Find(clienteId);
-        if (cliente == null)
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> EliminarCliente(int id)
         {
-            return NotFound();
+            var cliente = await _context.Clientes.FindAsync(id);
+            if (cliente == null)
+            {
+                return NotFound();
+            }
+
+            _context.Clientes.Remove(cliente);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
         }
 
-        if (!ModelState.IsValid)
+        [HttpGet("{clienteId}/Vehiculos")]
+        public async Task<ActionResult<IEnumerable<VehiculosDetalles>>> ObtenerVehiculosPorCliente(int clienteId)
         {
-            return BadRequest(ModelState);
+            var cliente = await _context.Clientes.Include(c => c.VehiculosDetalles).FirstOrDefaultAsync(c => c.ClienteId == clienteId);
+
+            if (cliente == null)
+            {
+                return NotFound();
+            }
+
+            return cliente.VehiculosDetalles.ToList();
         }
 
-        cliente.VehiculosDetalles.Add(vehiculo);
-        _contexto.SaveChanges();
-        return CreatedAtAction(nameof(ObtenerVehiculoPorId), new { clienteId, vehiculoId = vehiculo.VehiculoId }, vehiculo);
-    }
-
-    [HttpPut("{clienteId}/Vehiculos/{vehiculoId}")]
-    public ActionResult ActualizarVehiculo(int clienteId, int vehiculoId)
-    {
-        var cliente = _contexto.Clientes.Find(clienteId);
-        if (cliente == null)
+        [HttpGet("{clienteId}/Vehiculos/{vehiculoId}")]
+        public async Task<ActionResult<VehiculosDetalles>> ObtenerVehiculoPorId(int clienteId, int vehiculoId)
         {
-            return NotFound();
+            var cliente = await _context.Clientes.Include(c => c.VehiculosDetalles).FirstOrDefaultAsync(c => c.ClienteId == clienteId);
+
+            if (cliente == null)
+            {
+                return NotFound();
+            }
+
+            var vehiculo = cliente.VehiculosDetalles.FirstOrDefault(v => v.VehiculoId == vehiculoId);
+            if (vehiculo == null)
+            {
+                return NotFound();
+            }
+
+            return vehiculo;
         }
 
-        var vehiculoExistente = cliente.VehiculosDetalles.FirstOrDefault(v => v.VehiculoId == vehiculoId);
-        if (vehiculoExistente == null)
+        [HttpPost("{clienteId}/Vehiculos")]
+        public async Task<ActionResult<VehiculosDetalles>> AgregarVehiculo(int clienteId, VehiculosDetalles vehiculo)
         {
-            return NotFound();
-        }
-        _contexto.SaveChanges();
-        return NoContent();
-    }
+            var cliente = await _context.Clientes.Include(c => c.VehiculosDetalles).FirstOrDefaultAsync(c => c.ClienteId == clienteId);
 
-    [HttpDelete("{clienteId}/Vehiculos/{vehiculoId}")]
-    public ActionResult EliminarVehiculo(int clienteId, int vehiculoId)
-    {
-        var cliente = _contexto.Clientes.Find(clienteId);
-        if (cliente == null)
-        {
-            return NotFound();
-        }
+            if (cliente == null)
+            {
+                return NotFound();
+            }
 
-        var vehiculo = cliente.VehiculosDetalles.FirstOrDefault(v => v.VehiculoId == vehiculoId);
-        if (vehiculo == null)
-        {
-            return NotFound();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            cliente.VehiculosDetalles.Add(vehiculo);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(ObtenerVehiculoPorId), new { clienteId, vehiculoId = vehiculo.VehiculoId }, vehiculo);
         }
 
-        cliente.VehiculosDetalles.Remove(vehiculo);
-        _contexto.SaveChanges();
-        return NoContent();
+        [HttpPut("{clienteId}/Vehiculos/{vehiculoId}")]
+        public async Task<ActionResult> ActualizarVehiculo(int clienteId, int vehiculoId, VehiculosDetalles vehiculo)
+        {
+            var cliente = await _context.Clientes.Include(c => c.VehiculosDetalles).FirstOrDefaultAsync(c => c.ClienteId == clienteId);
+
+            if (cliente == null)
+            {
+                return NotFound();
+            }
+
+            var vehiculoExistente = cliente.VehiculosDetalles.FirstOrDefault(v => v.VehiculoId == vehiculoId);
+            if (vehiculoExistente == null)
+            {
+                return NotFound();
+            }
+
+            _context.Entry(vehiculoExistente).CurrentValues.SetValues(vehiculo);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpDelete("{clienteId}/Vehiculos/{vehiculoId}")]
+        public async Task<ActionResult> EliminarVehiculo(int clienteId, int vehiculoId)
+        {
+            var cliente = await _context.Clientes.Include(c => c.VehiculosDetalles).FirstOrDefaultAsync(c => c.ClienteId == clienteId);
+
+            if (cliente == null)
+            {
+                return NotFound();
+            }
+
+            var vehiculo = cliente.VehiculosDetalles.FirstOrDefault(v => v.VehiculoId == vehiculoId);
+            if (vehiculo == null)
+            {
+                return NotFound();
+            }
+
+            cliente.VehiculosDetalles.Remove(vehiculo);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
     }
 }

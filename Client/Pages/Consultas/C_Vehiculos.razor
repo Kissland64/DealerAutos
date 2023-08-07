@@ -40,6 +40,7 @@
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
+                        <th></th>
                         <th>VehiculoId</th>
                         <th>Marca</th>
                         <th>Modelo</th>
@@ -54,6 +55,7 @@
                     @foreach (var item in vehiculos)
                     {
                         <tr>
+                            <th><img src="@item.Imagen" width="110px" height="110px" /></th>
                             <td>@item.VehiculoId</td>
                             <td>@item.Marca</td>
                             <td>@item.Modelo</td>
