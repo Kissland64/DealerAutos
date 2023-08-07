@@ -11,6 +11,8 @@ El usuario puede ingresar detalles de la venta y seleccionar varios vehículos d
 El componente también realiza validación, calcula el precio total de la venta y permite a los usuarios crear, editar y eliminar registros de ventas. 
 Además, muestra notificaciones para de esta manera informarle al usuario que si todo esta funcionando correctamente o si esta fallando.
 
+Este R_Ventas tiene un error que no pude identificar que al momento de eliminar el detalle de una venta limpia todos los datos del formulario.
+
 Tambien esta el registro de compras que al final no lo pude terminar de crear, porque me tomo demasiado tiempo arreglar varios errores
 que estaban en el registro de ventas.
 
