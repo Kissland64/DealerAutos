@@ -86,11 +86,9 @@ namespace DealerAutos.Server.Migrations
                     Modelo = table.Column<string>(type: "TEXT", nullable: false),
                     Tipo = table.Column<string>(type: "TEXT", nullable: false),
                     Anio = table.Column<string>(type: "TEXT", nullable: false),
-                    Placa = table.Column<string>(type: "TEXT", nullable: false),
+                    Vendido = table.Column<bool>(type: "INTEGER", nullable: false),
                     Precio = table.Column<double>(type: "REAL", nullable: false),
-                    Existencia = table.Column<double>(type: "REAL", nullable: false),
-                    Imagen = table.Column<string>(type: "TEXT", nullable: true),
-                    Total = table.Column<double>(type: "REAL", nullable: false)
+                    Imagen = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -161,19 +159,19 @@ namespace DealerAutos.Server.Migrations
 
             migrationBuilder.InsertData(
                 table: "Vehiculos",
-                columns: new[] { "VehiculoId", "Anio", "Existencia", "Imagen", "Marca", "Modelo", "Placa", "Precio", "Tipo", "Total" },
+                columns: new[] { "VehiculoId", "Anio", "Imagen", "Marca", "Modelo", "Precio", "Tipo", "Vendido" },
                 values: new object[,]
                 {
-                    { 1, "2021", 5.0, "https://www.motortrend.com/uploads/sites/5/2021/06/2021-Honda-CR-V-Touring.jpg", "Honda", "CR-V", "G520423", 6745.0, "Jeepeta", 0.0 },
-                    { 2, "2022", 5.0, "https://www.yankodesign.com/images/design_news/2022/12/first-drive-new-honda-civic-type-r/2022_Honda_Civic-Type-R_Review_yankodesign_Hero.jpg", "Honda", "Civic", "J134998", 5340.0, "Sedán", 0.0 },
-                    { 3, "2023", 5.0, "https://images.drive.com.au/driveau/image/upload/c_fill,f_auto,g_auto,h_675,q_auto:eco,w_1200/v1/cms/uploads/a7tgfapzsadx4m3zstqm", "Isuzu", "D-MAX", "H722423", 8950.0, "Camioneta", 0.0 },
-                    { 4, "2023", 4.0, "https://www.motortrend.com/uploads/2022/05/2023-Audi-A3-003-front-three-quarter-view.jpg", "Audi", "A3 S-Line", "A432539", 9500.0, "Compacto", 0.0 },
-                    { 5, "2010", 3.0, "https://www.gravityautossandysprings.com/galleria_images/2185/2185_main_l.jpg", "Ford Mustang", "PREMIUM", "E926184", 6700.0, "Deportivo", 0.0 },
-                    { 6, "2018", 3.0, "https://img.supercarros.com/AdsPhotos/500x500/0/9819611.jpg", "Hyundai", "Sonata New Rise", "T748510", 5000.0, "Sedán", 0.0 },
-                    { 7, "2023", 2.0, "https://espaillatmotors.com/wp-content/uploads/2023/02/1-10-scaled.jpg", "SWM", "G01F", "P426591", 7000.0, "Jeepeta", 0.0 },
-                    { 8, "2020", 2.0, "https://www.automotiveaddicts.com/wp-content/uploads/2020/11/2020-chevrolet-corvette.jpg", "Chevrolet Corvette", "Stingray Z51", "F102607", 9000.0, "Deportivo", 0.0 },
-                    { 9, "2018", 2.0, "https://cdn.motor1.com/images/mgl/YMkY0/s1/lanzamiento-kia-picanto-2018.jpg", "Kia", "Picanto", "B892415", 2000.0, "Compacto", 0.0 },
-                    { 10, "2016", 1.0, "https://images.dealersync.com/cloud/userdocumentprod/2539/Photos/739007/20211111220319765_IMG_0941%20%282%29.jpg?_=69a6fb4e56f60fad1b05f3454c24fd6876d54cad", "Mini", "Cooper Countryman", "A397148", 3000.0, "Coupé/Deportivo", 0.0 }
+                    { 1, "2021", "https://www.motortrend.com/uploads/sites/5/2021/06/2021-Honda-CR-V-Touring.jpg", "Honda", "CR-V", 6745.0, "Jeepeta", false },
+                    { 2, "2022", "https://www.yankodesign.com/images/design_news/2022/12/first-drive-new-honda-civic-type-r/2022_Honda_Civic-Type-R_Review_yankodesign_Hero.jpg", "Honda", "Civic", 5340.0, "Sedán", false },
+                    { 3, "2023", "https://images.drive.com.au/driveau/image/upload/c_fill,f_auto,g_auto,h_675,q_auto:eco,w_1200/v1/cms/uploads/a7tgfapzsadx4m3zstqm", "Isuzu", "D-MAX", 8950.0, "Camioneta", false },
+                    { 4, "2023", "https://www.motortrend.com/uploads/2022/05/2023-Audi-A3-003-front-three-quarter-view.jpg", "Audi", "A3 S-Line", 9500.0, "Compacto", false },
+                    { 5, "2010", "https://www.gravityautossandysprings.com/galleria_images/2185/2185_main_l.jpg", "Ford Mustang", "PREMIUM", 6700.0, "Deportivo", false },
+                    { 6, "2018", "https://img.supercarros.com/AdsPhotos/500x500/0/9819611.jpg", "Hyundai", "Sonata New Rise", 5000.0, "Sedán", false },
+                    { 7, "2023", "https://espaillatmotors.com/wp-content/uploads/2023/02/1-10-scaled.jpg", "SWM", "G01F", 7000.0, "Jeepeta", false },
+                    { 8, "2020", "https://www.automotiveaddicts.com/wp-content/uploads/2020/11/2020-chevrolet-corvette.jpg", "Chevrolet Corvette", "Stingray Z51", 9000.0, "Deportivo", false },
+                    { 9, "2018", "https://cdn.motor1.com/images/mgl/YMkY0/s1/lanzamiento-kia-picanto-2018.jpg", "Kia", "Picanto", 2000.0, "Compacto", false },
+                    { 10, "2016", "https://images.dealersync.com/cloud/userdocumentprod/2539/Photos/739007/20211111220319765_IMG_0941%20%282%29.jpg?_=69a6fb4e56f60fad1b05f3454c24fd6876d54cad", "Mini", "Cooper Countryman", 3000.0, "Coupé/Deportivo", false }
                 });
 
             migrationBuilder.CreateIndex(

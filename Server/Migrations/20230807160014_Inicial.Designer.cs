@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DealerAutos.Server.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20230807092747_Inicial")]
+    [Migration("20230807160014_Inicial")]
     partial class Inicial
     {
         /// <inheritdoc />
@@ -159,9 +159,6 @@ namespace DealerAutos.Server.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<double>("Existencia")
-                        .HasColumnType("REAL");
-
                     b.Property<string>("Imagen")
                         .HasColumnType("TEXT");
 
@@ -173,10 +170,6 @@ namespace DealerAutos.Server.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Placa")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.Property<double>("Precio")
                         .HasColumnType("REAL");
 
@@ -184,8 +177,8 @@ namespace DealerAutos.Server.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<double>("Total")
-                        .HasColumnType("REAL");
+                    b.Property<bool>("Vendido")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("VehiculoId");
 
@@ -196,131 +189,111 @@ namespace DealerAutos.Server.Migrations
                         {
                             VehiculoId = 1,
                             Anio = "2021",
-                            Existencia = 5.0,
                             Imagen = "https://www.motortrend.com/uploads/sites/5/2021/06/2021-Honda-CR-V-Touring.jpg",
                             Marca = "Honda",
                             Modelo = "CR-V",
-                            Placa = "G520423",
                             Precio = 6745.0,
                             Tipo = "Jeepeta",
-                            Total = 0.0
+                            Vendido = false
                         },
                         new
                         {
                             VehiculoId = 2,
                             Anio = "2022",
-                            Existencia = 5.0,
                             Imagen = "https://www.yankodesign.com/images/design_news/2022/12/first-drive-new-honda-civic-type-r/2022_Honda_Civic-Type-R_Review_yankodesign_Hero.jpg",
                             Marca = "Honda",
                             Modelo = "Civic",
-                            Placa = "J134998",
                             Precio = 5340.0,
                             Tipo = "Sedán",
-                            Total = 0.0
+                            Vendido = false
                         },
                         new
                         {
                             VehiculoId = 3,
                             Anio = "2023",
-                            Existencia = 5.0,
                             Imagen = "https://images.drive.com.au/driveau/image/upload/c_fill,f_auto,g_auto,h_675,q_auto:eco,w_1200/v1/cms/uploads/a7tgfapzsadx4m3zstqm",
                             Marca = "Isuzu",
                             Modelo = "D-MAX",
-                            Placa = "H722423",
                             Precio = 8950.0,
                             Tipo = "Camioneta",
-                            Total = 0.0
+                            Vendido = false
                         },
                         new
                         {
                             VehiculoId = 4,
                             Anio = "2023",
-                            Existencia = 4.0,
                             Imagen = "https://www.motortrend.com/uploads/2022/05/2023-Audi-A3-003-front-three-quarter-view.jpg",
                             Marca = "Audi",
                             Modelo = "A3 S-Line",
-                            Placa = "A432539",
                             Precio = 9500.0,
                             Tipo = "Compacto",
-                            Total = 0.0
+                            Vendido = false
                         },
                         new
                         {
                             VehiculoId = 5,
                             Anio = "2010",
-                            Existencia = 3.0,
                             Imagen = "https://www.gravityautossandysprings.com/galleria_images/2185/2185_main_l.jpg",
                             Marca = "Ford Mustang",
                             Modelo = "PREMIUM",
-                            Placa = "E926184",
                             Precio = 6700.0,
                             Tipo = "Deportivo",
-                            Total = 0.0
+                            Vendido = false
                         },
                         new
                         {
                             VehiculoId = 6,
                             Anio = "2018",
-                            Existencia = 3.0,
                             Imagen = "https://img.supercarros.com/AdsPhotos/500x500/0/9819611.jpg",
                             Marca = "Hyundai",
                             Modelo = "Sonata New Rise",
-                            Placa = "T748510",
                             Precio = 5000.0,
                             Tipo = "Sedán",
-                            Total = 0.0
+                            Vendido = false
                         },
                         new
                         {
                             VehiculoId = 7,
                             Anio = "2023",
-                            Existencia = 2.0,
                             Imagen = "https://espaillatmotors.com/wp-content/uploads/2023/02/1-10-scaled.jpg",
                             Marca = "SWM",
                             Modelo = "G01F",
-                            Placa = "P426591",
                             Precio = 7000.0,
                             Tipo = "Jeepeta",
-                            Total = 0.0
+                            Vendido = false
                         },
                         new
                         {
                             VehiculoId = 8,
                             Anio = "2020",
-                            Existencia = 2.0,
                             Imagen = "https://www.automotiveaddicts.com/wp-content/uploads/2020/11/2020-chevrolet-corvette.jpg",
                             Marca = "Chevrolet Corvette",
                             Modelo = "Stingray Z51",
-                            Placa = "F102607",
                             Precio = 9000.0,
                             Tipo = "Deportivo",
-                            Total = 0.0
+                            Vendido = false
                         },
                         new
                         {
                             VehiculoId = 9,
                             Anio = "2018",
-                            Existencia = 2.0,
                             Imagen = "https://cdn.motor1.com/images/mgl/YMkY0/s1/lanzamiento-kia-picanto-2018.jpg",
                             Marca = "Kia",
                             Modelo = "Picanto",
-                            Placa = "B892415",
                             Precio = 2000.0,
                             Tipo = "Compacto",
-                            Total = 0.0
+                            Vendido = false
                         },
                         new
                         {
                             VehiculoId = 10,
                             Anio = "2016",
-                            Existencia = 1.0,
                             Imagen = "https://images.dealersync.com/cloud/userdocumentprod/2539/Photos/739007/20211111220319765_IMG_0941%20%282%29.jpg?_=69a6fb4e56f60fad1b05f3454c24fd6876d54cad",
                             Marca = "Mini",
                             Modelo = "Cooper Countryman",
-                            Placa = "A397148",
                             Precio = 3000.0,
                             Tipo = "Coupé/Deportivo",
-                            Total = 0.0
+                            Vendido = false
                         });
                 });
 

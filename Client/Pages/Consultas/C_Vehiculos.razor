@@ -5,7 +5,7 @@
     <div class="card">
 
         <div class="card-header">
-            <h3> Consulta de vehiculos </h3>
+            <h3> Inventario </h3>
         </div>
         <div class="card-body">
             <form>
@@ -15,11 +15,9 @@
                         <option value="1">VehiculoId</option>
                         <option value="2">Marca</option>
                         <option value="4">Modelo</option>
-                        <option value="6">Tipo</option>
-                        <option value="7">Año</option>
-                        <option value="8">Placa</option>
-                        <option value="9">Precio</option>
-                        <option value="10">Existencia</option>
+                        <option value="5">Tipo</option>
+                        <option value="6">Año</option>
+                        <option value="7">Precio</option>
                     </InputSelect>
 
                     <div class="flex-fill mx-2">
@@ -46,9 +44,7 @@
                         <th>Modelo</th>
                         <th>Tipo</th>
                         <th>Año</th>
-                        <th>Placa</th>
                         <th>Precio</th>
-                        <th>Existencia</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -61,9 +57,7 @@
                             <td>@item.Modelo</td>
                             <td>@item.Tipo</td>
                             <td>@item.Anio</td>
-                            <td>@item.Placa</td>
                             <td>@item.Precio</td>
-                            <td>@item.Existencia</td>
                         </tr>
                     }
                 </tbody>
