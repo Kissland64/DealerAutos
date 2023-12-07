@@ -14,8 +14,21 @@ namespace DealerAutos.Server.Controllers
             _context = context;
         }
 
+        //[HttpGet("Detalle\{DetalleId}")]
+        //public async Task<ActionResult<VehiculosDetalles>> ObtenerVenta(int DetalleId)
+        //{
+        //    var venta = await _context.VehiculosDetalles.Include(v => v.VehiculosDetalles).FirstOrDefaultAsync(v => v.VentaId == DetalleId);
+
+        //    if (venta == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    return venta;
+        //}
+
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Vehiculos>>> GetVehiculos()
+        public async Task<ActionResult<IEnumerable<Vehiculos>>> GetVehiculosList()
         {
             var vehiculos = await _context.Vehiculos.ToListAsync();
 
@@ -28,44 +41,44 @@ namespace DealerAutos.Server.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Vehiculos>> GetVehiculos(int id)
+        public async Task<ActionResult<Vehiculos>> GetVehiculo(int id)
         {
-            var vehiculos = await _context.Vehiculos.FindAsync(id);
+            var vehiculo = await _context.Vehiculos.FindAsync(id);
 
-            if (vehiculos == null)
+            if (vehiculo == null)
             {
                 return NotFound();
             }
 
-            return vehiculos;
+            return vehiculo;
         }
 
         [HttpPost]
-        public async Task<ActionResult<Vehiculos>> PostVehiculos(Vehiculos vehiculos)
+        public async Task<ActionResult<Vehiculos>> PostVehiculo(Vehiculos vehiculo)
         {
-            if (vehiculos.VehiculoId == 0)
+            if (vehiculo.VehiculoId == 0)
             {
-                _context.Vehiculos.Add(vehiculos);
+                _context.Vehiculos.Add(vehiculo);
             }
             else
             {
-                _context.Vehiculos.Update(vehiculos);
+                _context.Vehiculos.Update(vehiculo);
             }
 
             await _context.SaveChangesAsync();
-            return Ok(vehiculos);
+            return Ok(vehiculo);
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteVehiculos(int id)
+        public async Task<IActionResult> DeleteVehiculo(int id)
         {
-            var vehiculos = await _context.Vehiculos.FindAsync(id);
-            if (vehiculos == null)
+            var vehiculo = await _context.Vehiculos.FindAsync(id);
+            if (vehiculo == null)
             {
                 return NotFound();
             }
 
-            _context.Vehiculos.Remove(vehiculos);
+            _context.Vehiculos.Remove(vehiculo);
             await _context.SaveChangesAsync();
 
             return NoContent();

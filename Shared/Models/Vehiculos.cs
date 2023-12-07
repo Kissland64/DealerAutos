@@ -27,4 +27,9 @@ public class Vehiculos{
     public double Precio { get; set; }
 
     public string? Imagen { get; set;}
+
+    public double Existencia { get; set; }
+
+    [ForeignKey("VehiculoId")]
+    public ICollection<VehiculosDetalles> VehiculosDetalles { get; set; } = new List<VehiculosDetalles>();
 }

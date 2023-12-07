@@ -8,4 +8,5 @@ public class VehiculosDetalles
     public int VehiculoId { get; set; }
     [Required(ErrorMessage = "Este campo es necesario")]
     public double Precio { get; set; }
+    public double Cantidad { get; set; }
 }

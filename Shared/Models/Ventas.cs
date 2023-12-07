@@ -7,6 +7,9 @@ public class Ventas{
 
     public int VentaId { get; set; }
 
+    [ForeignKey("EmpleadoId")]
+    public int EmpleadoId { get; set; }
+
     [Required(ErrorMessage = "Este campo es necesario")]
     public string Nombre { get; set; } = string.Empty;
 

@@ -1,0 +1,162 @@
+@page "/Empleado"
+@page "/Empleado/{EmpleadoId:int}"
+@inject HttpClient httpClient
+
+<EditForm Model="empleados" OnValidSubmit = "Guardar">
+    <DataAnnotationsValidator />
+
+    <div class="container">
+        <div class="card shadow-lg">
+            <div class="card-header">
+                <h3>Registro de Productos</h3>
+            </div>
+            
+            <div class=card-body>
+                <div class="col-2">
+                    <label>Empleado Id:</label>
+                    <div class="input-group mb-3">
+                        <InputNumber @bind-Value="empleados.EmpleadoId" class="form-control"aria-describedby="BotonBuscar" />
+                        <button @onclick="Buscar" class="btn btn-outline-primary" type="button" id="BotonBuscar"><i class="oi oi-magnifying-glass"></i></button>
+                        @*<button @onclick="ShowProductsList" class="btn btn-outline-primary" type="button"><i class="oi oi-list" /></button>*@
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="mb-3">
+                        <label class="form-label" for="Nombre">Nombre y Apellido:</label>
+                        <InputText @bind-Value="empleados.Nombre" class="form-control" />
+                        <ValidationMessage For="@(() => empleados.Nombre)" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="mb-3">
+                            <label class="form-label" for="DNI">DNI Empleado:</label>
+                            <InputText @bind-Value="empleados.DNI" class="form-control" />
+                            <ValidationMessage For="@(() => empleados.DNI)" />
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="mb-3">
+                            <label class="form-label" for="Cedula">Cédula:</label>
+                            <InputText @bind-Value="empleados.Cedula" class="form-control" />
+                            <ValidationMessage For="@(() => empleados.Cedula)" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="mb-3">
+                            <label class="form-label" for="Telefono">Teléfono:</label>
+                            <InputText @bind-Value="empleados.Telefono" class="form-control" />
+                            <ValidationMessage For="@(() => empleados.Telefono)" />
+                        </div>
+                    </div>
+                    
+                    <div class="col">
+                        <div class="mb-3">
+                            <label class="form-label" for="Direccion">Dirección:</label>
+                            <InputText @bind-Value="empleados.Direccion" class="form-control" />
+                            <ValidationMessage For="@(() => empleados.Direccion)" />
+                        </div>
+                    </div>
+                    
+                </div>
+
+            </div>
+            <div class="card-footer d-flex justify-content-center">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-outline-primary" @onclick="Nuevo">Nuevo <i class="oi oi-file"></i></button>
+                    <button type="submit" class="btn btn-outline-success">Guardar <i class="oi oi-document"></i></button>
+                    <button type="button" class="btn btn-outline-danger" @onclick="Eliminar">Eliminar <i class="oi oi-trash"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int EmpleadoId { get; set; }
+
+    public int Nombre { get; set; }
+
+    public Empleados empleados { get; set; } = new Empleados();
+
+     protected override async Task OnInitializedAsync()
+    {
+        if (EmpleadoId != 0)
+        {
+            var empleadoEncontrado = await httpClient.GetFromJsonAsync<Empleados>($"api/Empleados/{EmpleadoId}");
+            if(empleadoEncontrado is not null)
+            {
+                empleados = empleadoEncontrado;
+            }
+        }            
+
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        empleados.EmpleadoId = EmpleadoId;
+        await Buscar();
+    }
+    private async Task Buscar()
+    {
+        try
+        {
+            var EmpleadoDevuelto = await httpClient.GetFromJsonAsync<Empleados>($"api/Empleados/{empleados.EmpleadoId}");
+            if (EmpleadoDevuelto is not null)
+            {
+                empleados = EmpleadoDevuelto;
+                StateHasChanged();
+            }
+        }
+        catch (Exception)
+        {
+            Nuevo();
+        }
+    }
+
+    public async Task Guardar()
+    {
+        using var response = await httpClient.PostAsJsonAsync("api/Empleados", empleados);
+        if (!response.IsSuccessStatusCode)
+        {
+            return;
+        }
+        var EmpleadoDevuelto = await response.Content.ReadFromJsonAsync<Empleados>();
+        if (EmpleadoDevuelto is not null)
+        {
+            empleados = EmpleadoDevuelto;
+            StateHasChanged();
+            Nuevo();
+        }
+    }
+
+    private void Nuevo()
+    {
+        empleados = new Empleados();
+    }
+
+    private async Task Eliminar()
+    {
+        using var response = await httpClient.DeleteAsync($"api/Empleados/{empleados.EmpleadoId}");
+        if (!response.IsSuccessStatusCode)
+        {
+            return;
+        }
+        Nuevo();
+    }
+    @*
+     public void ShowProductsList()
+    {
+        modalService.Show<C_Empleados>(
+            "Lista de empleados",
+            new ModalOptions
+            {
+                Size = ModalSize.ExtraLarge
+            }
+        );
+    }
+    *@
+}

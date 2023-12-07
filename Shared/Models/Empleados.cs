@@ -1,19 +1,20 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-public class Clientes
+public class Empleados
 {
     [Key]
 
-    public int ClienteId { get; set; }
-
-    public DateTime Fecha { get; set; }
+    public int EmpleadoId { get; set; }
 
     [Required(ErrorMessage = "Este campo es necesario")]
     public string Nombre { get; set;} =string.Empty;
 
     [Required(ErrorMessage = "Este campo es necesario")]
     public string Apellido { get; set;} = string.Empty;
+
+    [Required(ErrorMessage = "Este campo es necesario")]
+    public string DNI { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Este campo es necesario")]
     public string Cedula { get; set; } = string.Empty;
@@ -23,9 +24,4 @@ public class Clientes
 
     [Required(ErrorMessage = "Este campo es necesario")]
     public string Direccion { get; set; } = string.Empty;
-
-    [Required(ErrorMessage = "Este campo es necesario")]
-    public double CantidadAdquirida { get; set; }
-
-    public int VehiculoId { get; set;}
 }   
