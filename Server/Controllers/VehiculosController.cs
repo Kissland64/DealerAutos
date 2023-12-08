@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,21 +17,9 @@ namespace DealerAutos.Server.Controllers
             _context = context;
         }
 
-        //[HttpGet("Detalle\{DetalleId}")]
-        //public async Task<ActionResult<VehiculosDetalles>> ObtenerVenta(int DetalleId)
-        //{
-        //    var venta = await _context.VehiculosDetalles.Include(v => v.VehiculosDetalles).FirstOrDefaultAsync(v => v.VentaId == DetalleId);
-
-        //    if (venta == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return venta;
-        //}
-
+        // GET: api/Vehiculos
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Vehiculos>>> GetVehiculosList()
+        public async Task<ActionResult<IEnumerable<Vehiculos>>> GetVehiculos()
         {
             var vehiculos = await _context.Vehiculos.ToListAsync();
 
@@ -37,9 +28,10 @@ namespace DealerAutos.Server.Controllers
                 return NotFound();
             }
 
-            return vehiculos;
+            return Ok(vehiculos);
         }
 
+        // GET: api/Vehiculos/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Vehiculos>> GetVehiculo(int id)
         {
@@ -50,29 +42,64 @@ namespace DealerAutos.Server.Controllers
                 return NotFound();
             }
 
-            return vehiculo;
-        }
-
-        [HttpPost]
-        public async Task<ActionResult<Vehiculos>> PostVehiculo(Vehiculos vehiculo)
-        {
-            if (vehiculo.VehiculoId == 0)
-            {
-                _context.Vehiculos.Add(vehiculo);
-            }
-            else
-            {
-                _context.Vehiculos.Update(vehiculo);
-            }
-
-            await _context.SaveChangesAsync();
             return Ok(vehiculo);
         }
 
+        // PUT: api/Vehiculos/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutVehiculo(int id, Vehiculos vehiculo)
+        {
+            if (id != vehiculo.VehiculoId)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(vehiculo).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!VehiculoExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+        // POST: api/Vehiculos
+        [HttpPost]
+        public async Task<ActionResult<Vehiculos>> PostVehiculo(Vehiculos vehiculo)
+        {
+            if (VehiculoExists(vehiculo.VehiculoId))
+            {
+                _context.Vehiculos.Update(vehiculo);
+            }
+            else
+            {
+                _context.Vehiculos.Add(vehiculo);
+            }
+
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetVehiculo", new { id = vehiculo.VehiculoId }, vehiculo);
+        }
+
+        // DELETE: api/Vehiculos/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteVehiculo(int id)
         {
             var vehiculo = await _context.Vehiculos.FindAsync(id);
+
             if (vehiculo == null)
             {
                 return NotFound();
@@ -82,6 +109,11 @@ namespace DealerAutos.Server.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        private bool VehiculoExists(int id)
+        {
+            return _context.Vehiculos.Any(v => v.VehiculoId == id);
         }
     }
 }

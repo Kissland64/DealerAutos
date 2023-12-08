@@ -1,0 +1,82 @@
+@page "/Carrito"
+@* @attribute [Authorize(Roles = "Cliente")] *@
+@using DealerAutos.Client.Sesion
+@inject HttpClient httpClient
+@inject NavigationManager navManager
+@inject IUsuarioAutenticadoService usuarioAutenticadoService
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Text.Json;
+
+<div class="catalagos">
+    <div class="container">
+        <div class="row">
+            @foreach (var item in vehiculos)
+            {
+                <div class="col-md-4 mb-3">
+                    <div class="card" @onclick="@(() => Navegar(item.VehiculoId))">
+                        <div class="img-container">
+                            @if (item.Imagen != null)
+                            {
+                                <img src="@item.Imagen" alt="Placeholder" class="card-img-top" style="max-height: 250px;" />
+                            }
+                            else
+                            {
+                                <!-- Default image or placeholder if no image is available -->
+                                <img src="path/to/default/image.jpg" alt="Placeholder" class="card-img-top" style="max-height: 200px;" />
+                            }
+                        </div>
+                        <div class="card-body">
+                            <h6><strong>Modelo del vehiculo</strong></h6>
+                            <div class="mb-3">
+                                @item.Modelo
+                            </div>
+                            <h6><strong>Año del vehiculo</strong></h6>
+                            <div class="mb-3">
+                                @item.Anio
+                            </div>
+                            <h6><strong>Marca del vehiculo</strong></h6>
+                            <div class="mb-3">
+                                 @item.Marca
+                            </div>
+                            <h6><strong>Precio del vehiculo</strong></h6>
+                            <div class="mb-3">
+                                <i class="oi oi-dollar" /> @item.Precio
+                            </div>
+                            @if (usuarioAutenticadoService.Usuarios != null &&
+                                usuarioAutenticadoService.Usuarios.Compras.Any(c => c.VehiculoId == item.VehiculoId))
+                            {
+                                <p><i class="oi oi-check" /> ¡Añadido en el carrito!</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    public List<Vehiculos>? vehiculos { get; set; } = new List<Vehiculos>();
+
+    override protected async Task OnInitializedAsync()
+    {
+        var userJson = await jsRuntime.InvokeAsync<string>("localStorage.getItem", "user");
+        if (!string.IsNullOrEmpty(userJson))
+        {
+            usuarioAutenticadoService.Usuarios = JsonSerializer.Deserialize<Usuario>(userJson, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+        }
+
+        vehiculos = await httpClient.GetFromJsonAsync<List<Vehiculos>>("api/Vehiculos");
+    }
+
+    [Inject] IJSRuntime jsRuntime { get; set; }
+
+    public void Navegar(int id)
+    {
+        navManager.NavigateTo($"/Compra/{id}");
+    }
+}

@@ -6,6 +6,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 var ConStr = builder.Configuration.GetConnectionString("ConStr");
 builder.Services.AddDbContextFactory<Context>(options => options.UseSqlite(ConStr));
+builder.Services.AddDbContextFactory<Context>(opt => opt.UseSqlServer(ConStr));
+
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();

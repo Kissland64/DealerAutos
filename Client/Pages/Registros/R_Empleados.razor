@@ -1,6 +1,8 @@
 @page "/Empleado"
 @page "/Empleado/{EmpleadoId:int}"
+@using DealerAutos.Client.Extensors
 @inject HttpClient httpClient
+@inject NotificationService NotificationService
 
 <EditForm Model="empleados" OnValidSubmit = "Guardar">
     <DataAnnotationsValidator />
@@ -17,14 +19,21 @@
                     <div class="input-group mb-3">
                         <InputNumber @bind-Value="empleados.EmpleadoId" class="form-control"aria-describedby="BotonBuscar" />
                         <button @onclick="Buscar" class="btn btn-outline-primary" type="button" id="BotonBuscar"><i class="oi oi-magnifying-glass"></i></button>
-                        @*<button @onclick="ShowProductsList" class="btn btn-outline-primary" type="button"><i class="oi oi-list" /></button>*@
+                        @*<button @onclick="ShowEmpleadosList" class="btn btn-outline-primary" type="button"><i class="oi oi-list" /></button>*@
                     </div>
                 </div>
                 <div class="col-3">
                     <div class="mb-3">
-                        <label class="form-label" for="Nombre">Nombre y Apellido:</label>
+                        <label class="form-label" for="Nombre">Nombre:</label>
                         <InputText @bind-Value="empleados.Nombre" class="form-control" />
                         <ValidationMessage For="@(() => empleados.Nombre)" />
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="mb-3">
+                        <label class="form-label" for="Apellido">Apellido:</label>
+                        <InputText @bind-Value="empleados.Apellido" class="form-control" />
+                        <ValidationMessage For="@(() => empleados.Apellido)" />
                     </div>
                 </div>
                 <div class="row">
@@ -82,15 +91,12 @@
 
     public Empleados empleados { get; set; } = new Empleados();
 
-     protected override async Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
         if (EmpleadoId != 0)
         {
-            var empleadoEncontrado = await httpClient.GetFromJsonAsync<Empleados>($"api/Empleados/{EmpleadoId}");
-            if(empleadoEncontrado is not null)
-            {
-                empleados = empleadoEncontrado;
-            }
+            EmpleadoId = empleados.EmpleadoId;
+            await Buscar();
         }            
 
     }
@@ -100,52 +106,108 @@
         empleados.EmpleadoId = EmpleadoId;
         await Buscar();
     }
-    private async Task Buscar()
+
+    public async Task Buscar()
     {
         try
         {
-            var EmpleadoDevuelto = await httpClient.GetFromJsonAsync<Empleados>($"api/Empleados/{empleados.EmpleadoId}");
-            if (EmpleadoDevuelto is not null)
+            var empleadoEncontrado = await httpClient.GetFromJsonAsync<Empleados>($"api/Empleados/{empleados.EmpleadoId}");
+            if (empleadoEncontrado is not null)
             {
-                empleados = EmpleadoDevuelto;
+                empleados = empleadoEncontrado;
                 StateHasChanged();
+                NotificationService.ShowNotification(
+                    titulo: "Búsqueda exitosa",
+                    mensaje: "Se encontró el empleado.",
+                    NotificationSeverity.Success
+                );
+            }
+            else
+            {
+                NotificationService.ShowNotification(
+                    titulo: "Error de búsqueda",
+                    mensaje: "Empleado no encontrado",
+                    NotificationSeverity.Error
+                );
             }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            
+        
             Nuevo();
         }
     }
+
 
     public async Task Guardar()
     {
-        using var response = await httpClient.PostAsJsonAsync("api/Empleados", empleados);
-        if (!response.IsSuccessStatusCode)
+        try
         {
-            return;
+            using var response = await httpClient.PostAsJsonAsync("api/Empleados", empleados);
+            response.EnsureSuccessStatusCode();
+            var empleadoDevuelto = await response.Content.ReadFromJsonAsync<Empleados>();
+            if (empleadoDevuelto is not null)
+            {
+                empleados = empleadoDevuelto;
+                StateHasChanged();
+                Nuevo();
+                NotificationService.ShowNotification(
+                    titulo: "Éxito",
+                    mensaje: "Empleado guardado exitosamente",
+                    NotificationSeverity.Success
+                );
+            }
+            else
+            {
+                NotificationService.ShowNotification(
+                    titulo: "Error",
+                    mensaje: "El empleado no se guardó correctamente",
+                    NotificationSeverity.Error
+                );
+            }
         }
-        var EmpleadoDevuelto = await response.Content.ReadFromJsonAsync<Empleados>();
-        if (EmpleadoDevuelto is not null)
+        catch (Exception ex)
         {
-            empleados = EmpleadoDevuelto;
-            StateHasChanged();
-            Nuevo();
+            NotificationService.ShowNotification(
+                titulo: "Error",
+                mensaje: ex.Message,
+                NotificationSeverity.Error
+            );
         }
     }
 
-    private void Nuevo()
+    public void Nuevo()
     {
         empleados = new Empleados();
+        // NotificationService.ShowNotification(
+        //     titulo: "Nuevo empleado",
+        //     mensaje: "Se ha creado un nuevo empleado.",
+        //     NotificationSeverity.Info
+        // );
     }
 
-    private async Task Eliminar()
+    public async Task Eliminar()
     {
-        using var response = await httpClient.DeleteAsync($"api/Empleados/{empleados.EmpleadoId}");
-        if (!response.IsSuccessStatusCode)
+        try
         {
-            return;
+            using var response = await httpClient.DeleteAsync($"api/Empleados/{empleados.EmpleadoId}");
+            response.EnsureSuccessStatusCode();
+            Nuevo();
+            NotificationService.ShowNotification(
+                titulo: "Eliminado",
+                mensaje: "El empleado se ha eliminado correctamente",
+                NotificationSeverity.Success
+            );
         }
-        Nuevo();
+        catch (Exception ex)
+        {
+            NotificationService.ShowNotification(
+                titulo: "Error",
+                mensaje: ex.Message,
+                NotificationSeverity.Error
+            );
+        }
     }
     @*
      public void ShowProductsList()

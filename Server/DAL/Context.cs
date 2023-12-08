@@ -6,6 +6,9 @@ public class Context : DbContext
     public DbSet<Ventas> Ventas { get; set; }
     public DbSet<Vehiculos> Vehiculos { get; set; }
     public DbSet<Empleados> Empleados { get; set; }
+    public DbSet<Usuario> Usuarios { get; set; }
+    public DbSet<Rol> Roles { get; set; }
+    public DbSet<Compras> Compras { get; set; }
     public DbSet<VehiculosDetalles> VehiculosDetalles { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -43,6 +46,33 @@ public class Context : DbContext
             new Vehiculos
             {VehiculoId = 10, Imagen = "https://images.dealersync.com/cloud/userdocumentprod/2539/Photos/739007/20211111220319765_IMG_0941%20%282%29.jpg?_=69a6fb4e56f60fad1b05f3454c24fd6876d54cad",
             Marca ="Mini", Modelo ="Cooper Countryman", Tipo ="Coupé/Deportivo", Anio ="2016", Precio = 3000, Existencia = 5,},
+        });
+
+        modelBuilder.Entity<Usuario>().HasData(new List<Usuario>()
+        {
+            new Usuario(){
+                UsuarioId = 1,
+                NombreCompleto = "Kissland Baker",
+                FechaNacimiento = new DateTime(2001, 4, 6),
+                NombreUsuario = "Admin",
+                Email = "admin@gmail.com",
+                Password = "Admin6423",
+                Rol = 1 },
+
+            new Usuario(){
+                UsuarioId = 2,
+                NombreCompleto = "Keury Rodriguez",
+                FechaNacimiento = new DateTime(2002, 5, 8),
+                NombreUsuario = "Cliente",
+                Email = "Keury@gmail.com",
+                Password = "Keury6423",
+                Rol = 2 },
+        });
+
+        modelBuilder.Entity<Rol>().HasData(new List<Rol>()
+        {
+            new Rol(){ RolId = 1, NombreRol = "Administrador" },
+            new Rol(){ RolId = 2, NombreRol = "Cliente" },
         });
     }
 }

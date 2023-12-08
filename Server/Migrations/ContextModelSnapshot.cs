@@ -16,6 +16,28 @@ namespace DealerAutos.Server.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.12");
 
+            modelBuilder.Entity("Compras", b =>
+                {
+                    b.Property<int>("CompraId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("VehiculoId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("CompraId");
+
+                    b.HasIndex("UsuarioId");
+
+                    b.ToTable("Compras");
+                });
+
             modelBuilder.Entity("Empleados", b =>
                 {
                     b.Property<int>("EmpleadoId")
@@ -49,6 +71,87 @@ namespace DealerAutos.Server.Migrations
                     b.HasKey("EmpleadoId");
 
                     b.ToTable("Empleados");
+                });
+
+            modelBuilder.Entity("Rol", b =>
+                {
+                    b.Property<int>("RolId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("NombreRol")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("RolId");
+
+                    b.ToTable("Roles");
+
+                    b.HasData(
+                        new
+                        {
+                            RolId = 1,
+                            NombreRol = "Administrador"
+                        },
+                        new
+                        {
+                            RolId = 2,
+                            NombreRol = "Cliente"
+                        });
+                });
+
+            modelBuilder.Entity("Usuario", b =>
+                {
+                    b.Property<int>("UsuarioId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("FechaNacimiento")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NombreCompleto")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NombreUsuario")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Rol")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("UsuarioId");
+
+                    b.ToTable("Usuarios");
+
+                    b.HasData(
+                        new
+                        {
+                            UsuarioId = 1,
+                            Email = "admin@gmail.com",
+                            FechaNacimiento = new DateTime(2001, 4, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            NombreCompleto = "Kissland Baker",
+                            NombreUsuario = "Admin",
+                            Password = "Admin6423",
+                            Rol = 1
+                        },
+                        new
+                        {
+                            UsuarioId = 2,
+                            Email = "Keury@gmail.com",
+                            FechaNacimiento = new DateTime(2002, 5, 8, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            NombreCompleto = "Keury Rodriguez",
+                            NombreUsuario = "Cliente",
+                            Password = "Keury6423",
+                            Rol = 2
+                        });
                 });
 
             modelBuilder.Entity("Vehiculos", b =>
@@ -98,7 +201,7 @@ namespace DealerAutos.Server.Migrations
                             VehiculoId = 1,
                             Anio = "2021",
                             Existencia = 5.0,
-                            Fecha = new DateTime(2023, 12, 6, 22, 51, 41, 26, DateTimeKind.Local).AddTicks(428),
+                            Fecha = new DateTime(2023, 12, 8, 1, 14, 36, 523, DateTimeKind.Local).AddTicks(401),
                             Imagen = "https://www.motortrend.com/uploads/sites/5/2021/06/2021-Honda-CR-V-Touring.jpg",
                             Marca = "Honda",
                             Modelo = "CR-V",
@@ -111,7 +214,7 @@ namespace DealerAutos.Server.Migrations
                             VehiculoId = 2,
                             Anio = "2022",
                             Existencia = 5.0,
-                            Fecha = new DateTime(2023, 12, 6, 22, 51, 41, 26, DateTimeKind.Local).AddTicks(450),
+                            Fecha = new DateTime(2023, 12, 8, 1, 14, 36, 523, DateTimeKind.Local).AddTicks(424),
                             Imagen = "https://www.yankodesign.com/images/design_news/2022/12/first-drive-new-honda-civic-type-r/2022_Honda_Civic-Type-R_Review_yankodesign_Hero.jpg",
                             Marca = "Honda",
                             Modelo = "Civic",
@@ -124,7 +227,7 @@ namespace DealerAutos.Server.Migrations
                             VehiculoId = 3,
                             Anio = "2023",
                             Existencia = 5.0,
-                            Fecha = new DateTime(2023, 12, 6, 22, 51, 41, 26, DateTimeKind.Local).AddTicks(452),
+                            Fecha = new DateTime(2023, 12, 8, 1, 14, 36, 523, DateTimeKind.Local).AddTicks(427),
                             Imagen = "https://images.drive.com.au/driveau/image/upload/c_fill,f_auto,g_auto,h_675,q_auto:eco,w_1200/v1/cms/uploads/a7tgfapzsadx4m3zstqm",
                             Marca = "Isuzu",
                             Modelo = "D-MAX",
@@ -137,7 +240,7 @@ namespace DealerAutos.Server.Migrations
                             VehiculoId = 4,
                             Anio = "2023",
                             Existencia = 5.0,
-                            Fecha = new DateTime(2023, 12, 6, 22, 51, 41, 26, DateTimeKind.Local).AddTicks(453),
+                            Fecha = new DateTime(2023, 12, 8, 1, 14, 36, 523, DateTimeKind.Local).AddTicks(428),
                             Imagen = "https://www.motortrend.com/uploads/2022/05/2023-Audi-A3-003-front-three-quarter-view.jpg",
                             Marca = "Audi",
                             Modelo = "A3 S-Line",
@@ -150,7 +253,7 @@ namespace DealerAutos.Server.Migrations
                             VehiculoId = 5,
                             Anio = "2010",
                             Existencia = 5.0,
-                            Fecha = new DateTime(2023, 12, 6, 22, 51, 41, 26, DateTimeKind.Local).AddTicks(455),
+                            Fecha = new DateTime(2023, 12, 8, 1, 14, 36, 523, DateTimeKind.Local).AddTicks(430),
                             Imagen = "https://www.gravityautossandysprings.com/galleria_images/2185/2185_main_l.jpg",
                             Marca = "Ford Mustang",
                             Modelo = "PREMIUM",
@@ -163,7 +266,7 @@ namespace DealerAutos.Server.Migrations
                             VehiculoId = 6,
                             Anio = "2018",
                             Existencia = 5.0,
-                            Fecha = new DateTime(2023, 12, 6, 22, 51, 41, 26, DateTimeKind.Local).AddTicks(458),
+                            Fecha = new DateTime(2023, 12, 8, 1, 14, 36, 523, DateTimeKind.Local).AddTicks(435),
                             Imagen = "https://img.supercarros.com/AdsPhotos/500x500/0/9819611.jpg",
                             Marca = "Hyundai",
                             Modelo = "Sonata New Rise",
@@ -176,7 +279,7 @@ namespace DealerAutos.Server.Migrations
                             VehiculoId = 7,
                             Anio = "2023",
                             Existencia = 5.0,
-                            Fecha = new DateTime(2023, 12, 6, 22, 51, 41, 26, DateTimeKind.Local).AddTicks(460),
+                            Fecha = new DateTime(2023, 12, 8, 1, 14, 36, 523, DateTimeKind.Local).AddTicks(437),
                             Imagen = "https://espaillatmotors.com/wp-content/uploads/2023/02/1-10-scaled.jpg",
                             Marca = "SWM",
                             Modelo = "G01F",
@@ -189,7 +292,7 @@ namespace DealerAutos.Server.Migrations
                             VehiculoId = 8,
                             Anio = "2020",
                             Existencia = 5.0,
-                            Fecha = new DateTime(2023, 12, 6, 22, 51, 41, 26, DateTimeKind.Local).AddTicks(461),
+                            Fecha = new DateTime(2023, 12, 8, 1, 14, 36, 523, DateTimeKind.Local).AddTicks(439),
                             Imagen = "https://www.automotiveaddicts.com/wp-content/uploads/2020/11/2020-chevrolet-corvette.jpg",
                             Marca = "Chevrolet Corvette",
                             Modelo = "Stingray Z51",
@@ -202,7 +305,7 @@ namespace DealerAutos.Server.Migrations
                             VehiculoId = 9,
                             Anio = "2018",
                             Existencia = 5.0,
-                            Fecha = new DateTime(2023, 12, 6, 22, 51, 41, 26, DateTimeKind.Local).AddTicks(463),
+                            Fecha = new DateTime(2023, 12, 8, 1, 14, 36, 523, DateTimeKind.Local).AddTicks(441),
                             Imagen = "https://cdn.motor1.com/images/mgl/YMkY0/s1/lanzamiento-kia-picanto-2018.jpg",
                             Marca = "Kia",
                             Modelo = "Picanto",
@@ -215,7 +318,7 @@ namespace DealerAutos.Server.Migrations
                             VehiculoId = 10,
                             Anio = "2016",
                             Existencia = 5.0,
-                            Fecha = new DateTime(2023, 12, 6, 22, 51, 41, 26, DateTimeKind.Local).AddTicks(465),
+                            Fecha = new DateTime(2023, 12, 8, 1, 14, 36, 523, DateTimeKind.Local).AddTicks(443),
                             Imagen = "https://images.dealersync.com/cloud/userdocumentprod/2539/Photos/739007/20211111220319765_IMG_0941%20%282%29.jpg?_=69a6fb4e56f60fad1b05f3454c24fd6876d54cad",
                             Marca = "Mini",
                             Modelo = "Cooper Countryman",
@@ -292,6 +395,15 @@ namespace DealerAutos.Server.Migrations
                     b.ToTable("Ventas");
                 });
 
+            modelBuilder.Entity("Compras", b =>
+                {
+                    b.HasOne("Usuario", null)
+                        .WithMany("Compras")
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("VehiculosDetalles", b =>
                 {
                     b.HasOne("Vehiculos", null)
@@ -305,6 +417,11 @@ namespace DealerAutos.Server.Migrations
                         .HasForeignKey("VentaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Usuario", b =>
+                {
+                    b.Navigation("Compras");
                 });
 
             modelBuilder.Entity("Vehiculos", b =>

@@ -43,23 +43,20 @@ namespace DealerAutos.Client.Controllers
         {
             try
             {
-                // Obtener el vehículo existente
                 var vehiculoExistente = await _context.Vehiculos.FindAsync(id);
 
                 if (vehiculoExistente == null)
                 {
-                    return NotFound(); // Devolver 404 si el vehículo no existe
+                    return NotFound();
                 }
 
-                // Actualizar propiedades del vehículo
                 vehiculoExistente.Precio = vehiculo.Precio;
                 vehiculoExistente.Existencia = vehiculo.Existencia;
 
-                // Guardar cambios en la base de datos
                 _context.Vehiculos.Update(vehiculoExistente);
                 await _context.SaveChangesAsync();
 
-                return Ok(vehiculoExistente); // Devolver el vehículo actualizado
+                return Ok(vehiculoExistente);
             }
             catch (Exception ex)
             {
@@ -74,7 +71,16 @@ namespace DealerAutos.Client.Controllers
             if (!Existe(ventas.VentaId))
             {
                 await _context.Ventas.AddAsync(ventas);
+                foreach (var detalle in ventas.VehiculosDetalles)
+                {
+                    var vehiculo = await _context.Vehiculos.FindAsync(detalle.VehiculoId);
+                    if (vehiculo != null)
+                    {
+                        vehiculo.Existencia -= detalle.Cantidad;
+                    }
+                }
             }
+
             else
             {
                 Ventas Anterior = await _context.Ventas
@@ -84,34 +90,34 @@ namespace DealerAutos.Client.Controllers
 
                 if (Anterior != null)
                 {
-                    // Restar existencia de los vehículos vendidos anteriormente
                     foreach (var detalle in Anterior.VehiculosDetalles)
                     {
                         var vehiculoAnterior = await _context.Vehiculos.FindAsync(detalle.VehiculoId);
                         if (vehiculoAnterior != null)
                         {
+                            detalle.Cantidad++;
                             vehiculoAnterior.Existencia += detalle.Cantidad;
                         }
+                        detalle.Cantidad--;
                     }
 
-                    // Eliminar detalles anteriores y agregar nuevos
                     _context.RemoveRange(Anterior.VehiculosDetalles);
                     await _context.SaveChangesAsync();
                     await _context.AddRangeAsync(ventas.VehiculosDetalles);
 
-                    // Actualizar venta
                     _context.Update(ventas);
                 }
             }
 
-            // Restar existencia de los vehículos vendidos en la nueva venta
             foreach (var detalle in ventas.VehiculosDetalles)
             {
                 var vehiculo = await _context.Vehiculos.FindAsync(detalle.VehiculoId);
                 if (vehiculo != null)
                 {
+                    detalle.Cantidad++;
                     vehiculo.Existencia -= detalle.Cantidad;
                 }
+                detalle.Cantidad--;
             }
 
             await _context.SaveChangesAsync();
@@ -129,14 +135,15 @@ namespace DealerAutos.Client.Controllers
                 return NotFound();
             }
 
-            // Aumentar existencia de los vehículos al eliminar la venta
             foreach (var detalle in venta.VehiculosDetalles)
             {
                 var vehiculo = await _context.Vehiculos.FindAsync(detalle.VehiculoId);
                 if (vehiculo != null)
                 {
+                    detalle.Cantidad++;
                     vehiculo.Existencia += detalle.Cantidad;
                 }
+                detalle.Cantidad--;
             }
 
             _context.Ventas.Remove(venta);

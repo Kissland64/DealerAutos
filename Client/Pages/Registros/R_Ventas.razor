@@ -1,6 +1,8 @@
 @page "/VentaVehiculos"
 @page "/VentaVehiculos/{VentaId:int}"
+@* @attribute [Authorize(Roles = "Administrador")] *@
 @using DealerAutos.Client.Extensors
+@using Microsoft.AspNetCore.Authorization;
 @inject HttpClient httpClient
 @inject NotificationService notificationService
 
@@ -238,8 +240,7 @@
                 DetalleEliminado = false;
                 return;
             }
-
-            // Resto del código para guardar la venta
+            
             using var response = await httpClient.PostAsJsonAsync("api/Ventas", ventas);
             response.EnsureSuccessStatusCode();
             var exito = await response.Content.ReadFromJsonAsync<Ventas>();
@@ -345,21 +346,27 @@
                 SetTotal();
 
                 vehiculo.Existencia -= 1;
-                using var response = await httpClient.PutAsJsonAsync($"api/Ventas/{vehiculosDetalles.VehiculoId}", vehiculo);
-                
+
+                using var response = await httpClient.PutAsJsonAsync($"api/Vehiculos/{vehiculosDetalles.VehiculoId}", vehiculo);
+
                 vehiculosDetalles = new VehiculosDetalles();
+
+                notificationService.ShowNotification(
+                    titulo: "Éxito",
+                    mensaje: "Detalle agregado correctamente",
+                    NotificationSeverity.Success
+                );
             }
             else
             {
                 notificationService.ShowNotification(
                     titulo: "Error",
                     mensaje: "No hay existencia suficiente para el vehículo seleccionado",
-                    NotificationSeverity.Error  
+                    NotificationSeverity.Error
                 );
             }
         }
     }
-
 
     public void EliminarDetalle(VehiculosDetalles vehiculosDetalles)
     {

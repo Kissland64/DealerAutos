@@ -1,55 +1,105 @@
-@page "/RegistroVehiculos"
-@page "/RegistroVehiculos/{VehiculoId:int}"
-@using DealerAutos.Client.Extensors;
-@inject NotificationService notificationService
+@page "/Vehiculos"
+@page "/Vheiculos/{VehiculoId:int}"
+@* @attribute [Authorize(Roles = "Administrador")] *@
 @inject HttpClient httpClient
+@inject NotificationService notificationService
+@using Microsoft.AspNetCore.Components.Authorization
+@inject IUsuarioAutenticadoService usuarioAutenticadoService
+@using Microsoft.AspNetCore.Authorization
+@using DealerAutos.Client.Sesion
+@using DealerAutos.Client.Extensors
+
+<PageTitle>RussoCursos</PageTitle>
 
 <EditForm Model="vehiculos" OnValidSubmit="Guardar">
     <DataAnnotationsValidator />
-    <div class="container">
+
+    <div class="container ">
         <div class="card shadow-lg">
             <div class="card-header">
                 <h3>Registro de vehiculos.</h3>
             </div>
-            <div class=card-body>
-                <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 col-xl-4">
-                    <label>Vehiculo Id:</label>
+            <div class="card-body">
+
+                <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 col-xl-4 ">
+                    <label> Vehiculo Id:</label>
                     <div class="input-group mb-3">
                         <InputNumber @bind-Value="vehiculos.VehiculoId" class="form-control" aria-describedby="BotonBuscar" />
-                        <button @onclick="Buscar" class="btn btn-outline-primary" 
-                        type="button" id="BotonBuscar"><i class="oi oi-magnifying-glass"></i></button>
+                        <button @onclick="Buscar" class="btn btn-outline-primary" type="button" id="BotonBuscar"><i class="oi oi-magnifying-glass" /></button>
                     </div>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label" for="Marca">Nombre:</label>
-                    <InputText @bind-Value="vehiculos.Marca" class="form-control" />
-                    <ValidationMessage For="@(() => vehiculos.Marca)" />
-                </div>
-                <div class="mb-3">
-                    <label class="form-label" for="Fecha">Fecha:</label>
-                    <InputDate @bind-Value="vehiculos.Fecha" class="form-control" />
-                    <ValidationMessage For="@(() => vehiculos.Fecha)" />
-                </div>
-                <div class="mb-3">
-                    <label class="form-label" for="Anio">Año:</label>
-                    <InputDate @bind-Value="vehiculos.Anio" class="form-control" />
-                    <ValidationMessage For="@(() => vehiculos.Anio)" />
-                </div>
-                <div class="mb-3">
-                    <label class="form-label" for="Modelo">Modelo:</label>
-                    <InputText @bind-Value="vehiculos.Modelo" class="form-control" />
+
+                <div class="mb-3 ">
+                    <label class="form-label" for="Modelo"><i class="oi oi-bookmark" /> Modelo del Vehiculo:</label>
+                    <InputText @bind-Value="vehiculos.Modelo" class="form-control " placeholder="Coloque un modelo para el vehiculo" />
                     <ValidationMessage For="@(() => vehiculos.Modelo)" />
                 </div>
+
                 <div class="mb-3">
-                    <label class="form-label" for="Tipo">Tipo:</label>
-                    <InputText @bind-Value="vehiculos.Tipo" class="form-control" />
+                    <label class="form-label " for="Fecha"><i class="oi oi-book" /> Fecha:</label>
+                    <InputDate @bind-Value="vehiculos.Fecha" class="form-control " placeholder="Fecha en la que se agrego" />
+                    <ValidationMessage For="@(() => vehiculos.Fecha)" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="Imagen"><i class="oi oi-puzzle-piece" /> Imagen:</label>
+                    <InputFile OnChange="AsignarRutaImagen" class="form-control" accept=".png, .jpg, .jpeg" />
+                    <ValidationMessage For="@(() => vehiculos.Imagen)" />
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="form-label" for="Marca"><i class="oi oi oi-check"/> Marca:</label>
+                    <InputText @bind-Value="vehiculos.Marca" class="form-control" placeholder="Coloque la marca del vehiculo" />
+                    <ValidationMessage For="@(() => vehiculos.Marca)" />
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="form-label" for="Tipo"><i class="oi oi oi-check"/> Tipo:</label>
+                    <InputText @bind-Value="vehiculos.Tipo" class="form-control" placeholder="Coloque el tipo de vehiculo" />
                     <ValidationMessage For="@(() => vehiculos.Tipo)" />
                 </div>
+
+                @* <div class="mb-3">
+                    <label class="form-label">
+                        Categor&iacute;a:
+                        <InputSelect @bind-Value="vehiculos.Tipo" class="dropdown-toggle">
+                            <option value="0" disabled>Seleccione un Tipo</option>
+                            @foreach (var tipo in L_vehiculos)
+                            {
+                                <option value="@tipo.VehiculoId">@tipo.Tipo</option>
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="@(() => vehiculos.Tipo)" />
+                    </label>
+                </div> *@
+
+                <div class="mb-3 ">
+                    <label class="form-label" for="Anio"><i class="oi oi-bookmark" /> Año del Vehiculo:</label>
+                    <InputText @bind-Value="vehiculos.Anio" class="form-control " placeholder="Coloque el año del vehiculo" />
+                    <ValidationMessage For="@(() => vehiculos.Anio)" />
+                </div>
+
+
                 <div class="mb-3">
-                    <label class="form-label" for="Precio">Precio:</label>
-                    <InputNumber @bind-Value="vehiculos.Precio" class="form-control" />
+                    <label class="form-label" for="Precio"><i class="oi oi-dollar" /> Precio:</label>
+
+                    <div class="input-group">
+                        <span class="input-group-text">$</span>
+                        <div class="row-cols-xl-2">
+                            <InputNumber @bind-Value="vehiculos.Precio" class="form-control " placeholder="Coloque el un precio" step="0.01" />
+                        </div>
+                    </div>
                     <ValidationMessage For="@(() => vehiculos.Precio)" />
                 </div>
+
+                <div class="mb-3 ">
+                    <label class="form-label" for="Existencia"><i class="oi oi-bookmark" /> Cantidad:</label>
+                    <InputNumber @bind-Value="vehiculos.Existencia" class="form-control " placeholder="Coloque una marca para el vehiculo" />
+                    <ValidationMessage For="@(() => vehiculos.Anio)" />
+                </div>
+
+                @* <button @onclick="AsignarRutaImagen">Asignar Imagen</button> *@
+
             </div>
             <div class="card-footer d-flex justify-content-center">
                 <div class="btn-group">
@@ -61,35 +111,46 @@
         </div>
     </div>
 </EditForm>
-<label>@Mensaje</label>
+
+
 @code {
     [Parameter]
     public int VehiculoId { get; set; }
+
+    public List<Vehiculos> L_vehiculos { get; set; } = new List<Vehiculos>();
+
     public Vehiculos vehiculos { get; set; } = new Vehiculos();
-    public string Mensaje { get; set; } = string.Empty;
+
+    private void AsignarRutaImagen()
+    {
+        vehiculos.Imagen = "ruta/imagen/vehiculo.jpg";
+    }
+
     protected override async Task OnInitializedAsync()
     {
+        await Buscar();
+
         if (VehiculoId > 0)
         {
-            vehiculos.VehiculoId = VehiculoId;
+            this.vehiculos.VehiculoId = VehiculoId;
             await Buscar();
         }
     }
+
     public async Task Buscar()
     {
         try
         {
-            var vehiculoEncontrado = await httpClient.GetFromJsonAsync<Vehiculos>($"api/Vehiculos/{vehiculos.VehiculoId}");
-            if (vehiculoEncontrado != null)
+            var buscar = await httpClient.GetFromJsonAsync<Vehiculos>($"api/Vehiculos/{vehiculos.VehiculoId}");
+            if (buscar != null)
             {
-                vehiculos = vehiculoEncontrado;
+                this.vehiculos = buscar;
+                var vehiculo = L_vehiculos.FirstOrDefault(c => c.VehiculoId == vehiculos.VehiculoId);
+                if (vehiculo != null)
+                {
+                    this.vehiculos.VehiculoId = vehiculo.VehiculoId;
+                }
                 StateHasChanged();
-
-                notificationService.ShowNotification(
-                    titulo: "Búsqueda exitosa",
-                    mensaje: "Se encontró el vehiculo.",
-                    NotificationSeverity.Success
-                );
             }
             else
             {
@@ -102,87 +163,97 @@
         }
         catch (Exception ex)
         {
-            notificationService.ShowNotification(
-                titulo: "Error de búsqueda",
-                mensaje: ex.Message,
-                NotificationSeverity.Error
-            );
+            // Handle exception
         }
     }
-    public async Task Guardar()
+
+    public async void Guardar()
     {
         try
         {
-            using var response = await httpClient.PostAsJsonAsync("api/Vehiculos", vehiculos);
-            response.EnsureSuccessStatusCode();
-            var exito = await response.Content.ReadFromJsonAsync<Vehiculos>();
-            if (exito != null)
-            {
-                vehiculos = exito;
-                StateHasChanged();
-                Nuevo();
-                notificationService.ShowNotification(
-                    titulo: "Éxito",
-                    mensaje: "Registro guardado",
-                    NotificationSeverity.Success
-                );
-            }
-            else
+            if (vehiculos.Precio <= 0.01 || vehiculos.Precio > 1000)
             {
                 notificationService.ShowNotification(
                     titulo: "Error",
-                    mensaje: "El registro no se guardó correctamente",
+                    mensaje: "El Precio debe estar entre 0.01 y 1000.",
+                    NotificationSeverity.Error
+                );
+                return;
+            }
+
+            HttpResponseMessage response;
+
+            if (vehiculos.VehiculoId > 0)
+            {
+                response = await httpClient.PutAsJsonAsync($"api/Vehiculos/{vehiculos.VehiculoId}", vehiculos);
+            }
+            else
+            {
+                // Create new record
+                response = await httpClient.PostAsJsonAsync("api/Vehiculos", vehiculos);
+            }
+
+            if (response.IsSuccessStatusCode)
+            {
+                var exito = await response.Content.ReadFromJsonAsync<Vehiculos>();
+
+                if (exito is not null)
+                {
+                    this.vehiculos = exito;
+                    Nuevo();
+                    notificationService.ShowNotification(
+                        titulo: "Éxito",
+                        mensaje: "Registro guardado",
+                        NotificationSeverity.Success
+                    );
+                }
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                notificationService.ShowNotification(
+                    titulo: "Error",
+                    mensaje: "El registro no se pudo guardar. Detalles: " + errorContent,
                     NotificationSeverity.Error
                 );
             }
         }
         catch (Exception ex)
         {
-            notificationService.ShowNotification(
-                titulo: "Error",
-                mensaje: ex.Message,
-                NotificationSeverity.Error
-            );
-        }
-    }
-    public void Nuevo()
-    {
-        vehiculos = new Vehiculos();
-        Mensaje = string.Empty;
-
-        notificationService.ShowNotification(
-            titulo: "Nuevo formulario",
-            mensaje: "Se ha creado un nuevo formulario.",
-            NotificationSeverity.Info
-        );
-    }
-    public async Task Eliminar()
-    {
-        try
-        {
-            using var response = await httpClient.DeleteAsync($"api/Vehiculos/{vehiculos.VehiculoId}");
-            response.EnsureSuccessStatusCode();
             Nuevo();
             notificationService.ShowNotification(
-                titulo: "Eliminado",
-                mensaje: "El vehiculo se ha eliminado correctamente",
-                NotificationSeverity.Success
-            );
-        }
-        catch (Exception ex)
-        {
-            notificationService.ShowNotification(
                 titulo: "Error",
-                mensaje: ex.Message,
+                mensaje: "Ocurrió un error al guardar: " + ex.Message,
                 NotificationSeverity.Error
             );
         }
     }
-    public bool Validar()
+
+    public void Nuevo()
     {
-        return !string.IsNullOrEmpty(vehiculos.Marca) &&
-               !string.IsNullOrEmpty(vehiculos.Modelo) &&
-               !string.IsNullOrEmpty(vehiculos.Tipo) &&
-               !string.IsNullOrEmpty(vehiculos.Anio);
+        this.vehiculos = new Vehiculos();
+        this.vehiculos.VehiculoId = 0;
+    }
+
+    public async Task Eliminar()
+    {
+        using var response = await httpClient.DeleteAsync($"api/Vehiculos/{vehiculos.VehiculoId}");
+        if (response.IsSuccessStatusCode)
+        {
+            notificationService.ShowNotification(
+                titulo: "Eliminado",
+                mensaje: "Se ha eliminado correctamente",
+                NotificationSeverity.Success
+            );
+            Nuevo();
+        }
+        else
+        {
+            notificationService.ShowNotification(
+                titulo: "Error",
+                mensaje: "No se pudo eliminar",
+                NotificationSeverity.Error
+            );
+        }
     }
 }
