@@ -31,7 +31,7 @@
                         <div class="col">
                             <label class="form-label" for="Nombre">Nombre:</label>
                             <div class="input-group">
-                                <InputText @bind-Value="empleados.Nombre" class="form-control" />
+                                <InputText @bind-Value="empleados.Nombre" class="form-control" placeholder="Escribe un nombre" />
                                 <span class="input-group-text"><i class="oi oi-person"></i></span>
                             </div>
                             <ValidationMessage For="@(() => empleados.Nombre)" />
@@ -41,7 +41,7 @@
                         <div class="col">
                             <label class="form-label" for="Apellido">Apellido:</label>
                             <div class="input-group">
-                                <InputText @bind-Value="empleados.Apellido" class="form-control" />
+                                <InputText @bind-Value="empleados.Apellido" class="form-control" placeholder="Escribe un apellido" />
                                 <span class="input-group-text"><i class="oi oi-person"></i></span>
                             </div>
                             <ValidationMessage For="@(() => empleados.Apellido)" />
@@ -53,7 +53,7 @@
                         <div class="mb-3">
                             <label class="form-label" for="DNI">DNI del Empleado:</label>
                             <div class="input-group">
-                                <InputText @bind-Value="empleados.DNI" class="form-control" />
+                                <InputText @bind-Value="empleados.DNI" class="form-control" placeholder="Escribe un DNI" />
                                 <span class="input-group-text"><i class="oi oi-document"></i></span>
                             </div>
                             <ValidationMessage For="@(() => empleados.DNI)" />
@@ -63,7 +63,7 @@
                         <div class="mb-3">
                             <label class="form-label" for="Cedula">Cédula:</label>
                             <div class="input-group">
-                                <InputText @bind-Value="empleados.Cedula" class="form-control" />
+                                <InputText @bind-Value="empleados.Cedula" class="form-control" placeholder="Escribe una cédula " />
                                 <span class="input-group-text"><i class="oi oi-credit-card"></i></span>
                             </div>
                             <ValidationMessage For="@(() => empleados.Cedula)" />
@@ -75,7 +75,7 @@
                         <div class="mb-3">
                             <label class="form-label" for="Telefono">Teléfono:</label>
                             <div class="input-group">
-                                <InputText @bind-Value="empleados.Telefono" class="form-control" />
+                                <InputText @bind-Value="empleados.Telefono" class="form-control" placeholder="Escribe un numero de teléfono" />
                                 <span class="input-group-text"><i class="oi oi-phone"></i></span>
                             </div>
                             <ValidationMessage For="@(() => empleados.Telefono)" />
@@ -85,7 +85,7 @@
                         <div class="mb-3">
                             <label class="form-label" for="Direccion">Dirección:</label>
                             <div class="input-group">
-                                <InputText @bind-Value="empleados.Direccion" class="form-control" />
+                                <InputText @bind-Value="empleados.Direccion" class="form-control" placeholder="Escribe una dirección" />
                                 <span class="input-group-text"><i class="oi oi-location"></i></span>
                             </div>
                             <ValidationMessage For="@(() => empleados.Direccion)" />

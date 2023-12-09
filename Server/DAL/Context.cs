@@ -72,7 +72,8 @@ public class Context : DbContext
         modelBuilder.Entity<Rol>().HasData(new List<Rol>()
         {
             new Rol(){ RolId = 1, NombreRol = "Administrador" },
-            new Rol(){ RolId = 2, NombreRol = "Cliente" },
+            new Rol(){ RolId = 2, NombreRol = "Empleado"},
+            new Rol(){ RolId = 3, NombreRol = "Cliente" }
         });
     }
 }

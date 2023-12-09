@@ -38,7 +38,7 @@
                             <label class="form-label" for="Nombre">
                                 <i class="oi oi-person"></i> Nombre:
                             </label>
-                            <InputText @bind-Value="ventas.Nombre" class="form-control" />
+                            <InputText @bind-Value="ventas.Nombre" class="form-control" placeholder="Escribe un nombre" />
                             <ValidationMessage For="() => ventas.Nombre" />
                         </div>
                     </div>
@@ -47,7 +47,7 @@
                             <label class="form-label" for="Apellido">
                                 <i class="oi oi-person"></i> Apellido:
                             </label>
-                            <InputText @bind-Value="ventas.Apellido" class="form-control" />
+                            <InputText @bind-Value="ventas.Apellido" class="form-control" placeholder="Escribe un apellido" />
                             <ValidationMessage For="() => ventas.Apellido" />
                         </div>
                     </div>
@@ -59,7 +59,7 @@
                             <label class="form-label" for="Cedula">
                                 <i class="oi oi-credit-card"></i> Cédula:
                             </label>
-                            <InputText @bind-Value="ventas.Cedula" class="form-control" />
+                            <InputText @bind-Value="ventas.Cedula" class="form-control" placeholder="Escribe una cédula" />
                             <ValidationMessage For="() => ventas.Cedula" />
                         </div>
                     </div>
@@ -68,7 +68,7 @@
                             <label class="form-label" for="Telefono">
                                 <i class="oi oi-phone"></i> Teléfono:
                             </label>
-                            <InputText @bind-Value="ventas.Telefono" class="form-control" />
+                            <InputText @bind-Value="ventas.Telefono" class="form-control" placeholder="Escribe una numero de teléfono" />
                             <ValidationMessage For="() => ventas.Telefono" />
                         </div>
                     </div>
@@ -80,7 +80,7 @@
                             <label class="form-label" for="Direccion">
                                 <i class="oi oi-location"></i> Dirección:
                             </label>
-                            <InputText @bind-Value="ventas.Direccion" class="form-control" />
+                            <InputText @bind-Value="ventas.Direccion" class="form-control" placeholder="Escribe una dirección" />
                             <ValidationMessage For="() => ventas.Direccion" />
                         </div>
                     </div>
@@ -370,7 +370,7 @@
                 ventas.VehiculosDetalles.Add(vehiculosDetalles);
                 SetTotal();
 
-                vehiculo.Existencia -= 1;
+                vehiculo.Existencia -= vehiculosDetalles.Cantidad; // Restar la cantidad del detalle a la existencia del vehículo
 
                 using var response = await httpClient.PutAsJsonAsync($"api/Vehiculos/{vehiculosDetalles.VehiculoId}", vehiculo);
 
@@ -393,11 +393,21 @@
         }
     }
 
+
     public void EliminarDetalle(VehiculosDetalles vehiculosDetalles)
     {
         this.ventas.VehiculosDetalles.Remove(vehiculosDetalles);
         SetTotal();
-        var vehiculo = L_Vehiculos.FirstOrDefault(v => v.VehiculoId == vehiculosDetalles.VehiculoId);
         DetalleEliminado = true;
+
+        foreach (var detalle in ventas.VehiculosDetalles)
+        {
+            var vehiculo = L_Vehiculos.FirstOrDefault(v => v.VehiculoId == detalle.VehiculoId);
+            vehiculo.Existencia += detalle.Cantidad;
+        }
+
+        // Sumar la cantidad del detalle eliminado a la existencia del vehículo
+        var vehiculoEliminado = L_Vehiculos.FirstOrDefault(v => v.VehiculoId == vehiculosDetalles.VehiculoId);
+        vehiculoEliminado.Existencia += vehiculosDetalles.Cantidad;
     }
 }

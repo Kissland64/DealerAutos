@@ -2,10 +2,9 @@
 @inject HttpClient httpClient
 
 <div class="card">
-    <div class="card">
-
-        <div class="card-header">
-            <h3> Inventario </h3>
+    <div class="card-header">
+        <h3>Inventario</h3>
+    </div>
         <div class="card-body">
             <form>
                 <div class="row">
@@ -22,11 +21,11 @@
                 <div class="input-group d-flex align-items-end">
                     <InputSelect class="form-select col-2" @bind-Value="filtro">
                         <option value="0">Sin filtro</option>
-                        <option value="1">Usuario Id</option>
-                        <option value="2">Nombre Completo</option>
-                        <option value="3">Nombre Usuario</option>
-                        <option value="4">Email</option>
-                        <option value="5">Rol</option>
+                        <option value="1">Vehiculo Id</option>
+                        <option value="2">Marca</option>
+                        <option value="3">Modelo</option>
+                        <option value="4">Tipo</option>
+                        <option value="5">Año</option>
                     </InputSelect>
 
                     <div class="flex-fill mx-2">
@@ -58,33 +57,34 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Listvehiculos)
-                    {
-                        <tr>
-                            <th><img src="@item.Imagen" width="110px" height="110px" /></th>
-                            <td>@item.VehiculoId</td>
-                            <td>@item.Marca</td>
-                            <td>@item.Modelo</td>
-                            <td>@item.Tipo</td>
-                            <td>@item.Anio</td>
-                            <td>@item.Precio</td>
-                            <td>@item.Existencia</td>
-                            <td>@item.Fecha.ToString("dd/MM/yyyy")</td>
-                        </tr>
-                    }
+                        @foreach (var item in Listvehiculos)
+                        {
+                            <tr>
+                                <th><img src="@item.Imagen" width="110px" height="110px" /></th>
+                                <td>@item.VehiculoId</td>
+                                <td>@item.Marca</td>
+                                <td>@item.Modelo</td>
+                                <td>@item.Tipo</td>
+                                <td>@item.Anio</td>
+                                <td>@item.Precio</td>
+                                <td>@item.Existencia</td>
+                                <td>@item.Fecha.ToString("dd/MM/yyyy")</td>
+                            </tr>
+                        }
                 </tbody>
             </table>
         }
-    </div>
-    <div class="card-footer">
-        <div class="form-row justify-content-sm-between" aria-orientation="vertical">
-            <div class="col-3">
-                <label for="CantidaRegistro" class="col-form-label"><strong>Filas</strong>&nbsp;</label>
-                <input id="CantidaRegistro" @bind-value="@conteo" disabled class="form-control" />
+        <div>
+            <div class="card-footer">
+                <div class="form-row justify-content-sm-between" aria-orientation="vertical">
+                    <div class="col-3">
+                    <label for="CantidaRegistro" class="col-form-label"><strong>Filas</strong>&nbsp;</label>
+                    <input id="CantidaRegistro" @bind-value="@conteo" disabled class="form-control" />
             </div>
         </div>
     </div>
 </div>
+
 
 @code {
     private List<Vehiculos> Listvehiculos;

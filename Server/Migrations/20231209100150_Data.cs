@@ -158,7 +158,8 @@ namespace DealerAutos.Server.Migrations
                 values: new object[,]
                 {
                     { 1, "Administrador" },
-                    { 2, "Cliente" }
+                    { 2, "Empleado" },
+                    { 3, "Cliente" }
                 });
 
             migrationBuilder.InsertData(
@@ -175,16 +176,16 @@ namespace DealerAutos.Server.Migrations
                 columns: new[] { "VehiculoId", "Anio", "Existencia", "Fecha", "Imagen", "Marca", "Modelo", "Precio", "Tipo", "Vendido" },
                 values: new object[,]
                 {
-                    { 1, "2021", 5.0, new DateTime(2023, 12, 8, 22, 40, 53, 937, DateTimeKind.Local).AddTicks(7474), "https://www.motortrend.com/uploads/sites/5/2021/06/2021-Honda-CR-V-Touring.jpg", "Honda", "CR-V", 6745.0, "Jeepeta", false },
-                    { 2, "2022", 5.0, new DateTime(2023, 12, 8, 22, 40, 53, 937, DateTimeKind.Local).AddTicks(7493), "https://www.yankodesign.com/images/design_news/2022/12/first-drive-new-honda-civic-type-r/2022_Honda_Civic-Type-R_Review_yankodesign_Hero.jpg", "Honda", "Civic", 5340.0, "Sedán", false },
-                    { 3, "2023", 5.0, new DateTime(2023, 12, 8, 22, 40, 53, 937, DateTimeKind.Local).AddTicks(7495), "https://images.drive.com.au/driveau/image/upload/c_fill,f_auto,g_auto,h_675,q_auto:eco,w_1200/v1/cms/uploads/a7tgfapzsadx4m3zstqm", "Isuzu", "D-MAX", 8950.0, "Camioneta", false },
-                    { 4, "2023", 5.0, new DateTime(2023, 12, 8, 22, 40, 53, 937, DateTimeKind.Local).AddTicks(7497), "https://www.motortrend.com/uploads/2022/05/2023-Audi-A3-003-front-three-quarter-view.jpg", "Audi", "A3 S-Line", 9500.0, "Compacto", false },
-                    { 5, "2010", 5.0, new DateTime(2023, 12, 8, 22, 40, 53, 937, DateTimeKind.Local).AddTicks(7498), "https://www.gravityautossandysprings.com/galleria_images/2185/2185_main_l.jpg", "Ford Mustang", "PREMIUM", 6700.0, "Deportivo", false },
-                    { 6, "2018", 5.0, new DateTime(2023, 12, 8, 22, 40, 53, 937, DateTimeKind.Local).AddTicks(7502), "https://img.supercarros.com/AdsPhotos/1024x768/0/11145289.jpg?wmo=08ba5e0a5f4c288ae8e9e6a1dd4b7e5962c1cab6b6265e400f229da56f718809cf87e80713186756a4df4a205b1655e81d4bb982212a95d7a746b9ebc17c6f91", "Hyundai", "Sonata New Rise", 5000.0, "Sedán", false },
-                    { 7, "2023", 5.0, new DateTime(2023, 12, 8, 22, 40, 53, 937, DateTimeKind.Local).AddTicks(7504), "https://espaillatmotors.com/wp-content/uploads/2023/02/1-10-scaled.jpg", "SWM", "G01F", 7000.0, "Jeepeta", false },
-                    { 8, "2020", 5.0, new DateTime(2023, 12, 8, 22, 40, 53, 937, DateTimeKind.Local).AddTicks(7505), "https://www.automotiveaddicts.com/wp-content/uploads/2020/11/2020-chevrolet-corvette.jpg", "Chevrolet Corvette", "Stingray Z51", 9000.0, "Deportivo", false },
-                    { 9, "2018", 5.0, new DateTime(2023, 12, 8, 22, 40, 53, 937, DateTimeKind.Local).AddTicks(7507), "https://cdn.motor1.com/images/mgl/YMkY0/s1/lanzamiento-kia-picanto-2018.jpg", "Kia", "Picanto", 2000.0, "Compacto", false },
-                    { 10, "2016", 5.0, new DateTime(2023, 12, 8, 22, 40, 53, 937, DateTimeKind.Local).AddTicks(7509), "https://images.dealersync.com/cloud/userdocumentprod/2539/Photos/739007/20211111220319765_IMG_0941%20%282%29.jpg?_=69a6fb4e56f60fad1b05f3454c24fd6876d54cad", "Mini", "Cooper Countryman", 3000.0, "Coupé/Deportivo", false }
+                    { 1, "2021", 5.0, new DateTime(2023, 12, 9, 6, 1, 49, 963, DateTimeKind.Local).AddTicks(3627), "https://www.motortrend.com/uploads/sites/5/2021/06/2021-Honda-CR-V-Touring.jpg", "Honda", "CR-V", 6745.0, "Jeepeta", false },
+                    { 2, "2022", 5.0, new DateTime(2023, 12, 9, 6, 1, 49, 963, DateTimeKind.Local).AddTicks(3647), "https://www.yankodesign.com/images/design_news/2022/12/first-drive-new-honda-civic-type-r/2022_Honda_Civic-Type-R_Review_yankodesign_Hero.jpg", "Honda", "Civic", 5340.0, "Sedán", false },
+                    { 3, "2023", 5.0, new DateTime(2023, 12, 9, 6, 1, 49, 963, DateTimeKind.Local).AddTicks(3648), "https://images.drive.com.au/driveau/image/upload/c_fill,f_auto,g_auto,h_675,q_auto:eco,w_1200/v1/cms/uploads/a7tgfapzsadx4m3zstqm", "Isuzu", "D-MAX", 8950.0, "Camioneta", false },
+                    { 4, "2023", 5.0, new DateTime(2023, 12, 9, 6, 1, 49, 963, DateTimeKind.Local).AddTicks(3650), "https://www.motortrend.com/uploads/2022/05/2023-Audi-A3-003-front-three-quarter-view.jpg", "Audi", "A3 S-Line", 9500.0, "Compacto", false },
+                    { 5, "2010", 5.0, new DateTime(2023, 12, 9, 6, 1, 49, 963, DateTimeKind.Local).AddTicks(3651), "https://www.gravityautossandysprings.com/galleria_images/2185/2185_main_l.jpg", "Ford Mustang", "PREMIUM", 6700.0, "Deportivo", false },
+                    { 6, "2018", 5.0, new DateTime(2023, 12, 9, 6, 1, 49, 963, DateTimeKind.Local).AddTicks(3655), "https://img.supercarros.com/AdsPhotos/1024x768/0/11145289.jpg?wmo=08ba5e0a5f4c288ae8e9e6a1dd4b7e5962c1cab6b6265e400f229da56f718809cf87e80713186756a4df4a205b1655e81d4bb982212a95d7a746b9ebc17c6f91", "Hyundai", "Sonata New Rise", 5000.0, "Sedán", false },
+                    { 7, "2023", 5.0, new DateTime(2023, 12, 9, 6, 1, 49, 963, DateTimeKind.Local).AddTicks(3656), "https://espaillatmotors.com/wp-content/uploads/2023/02/1-10-scaled.jpg", "SWM", "G01F", 7000.0, "Jeepeta", false },
+                    { 8, "2020", 5.0, new DateTime(2023, 12, 9, 6, 1, 49, 963, DateTimeKind.Local).AddTicks(3658), "https://www.automotiveaddicts.com/wp-content/uploads/2020/11/2020-chevrolet-corvette.jpg", "Chevrolet Corvette", "Stingray Z51", 9000.0, "Deportivo", false },
+                    { 9, "2018", 5.0, new DateTime(2023, 12, 9, 6, 1, 49, 963, DateTimeKind.Local).AddTicks(3659), "https://cdn.motor1.com/images/mgl/YMkY0/s1/lanzamiento-kia-picanto-2018.jpg", "Kia", "Picanto", 2000.0, "Compacto", false },
+                    { 10, "2016", 5.0, new DateTime(2023, 12, 9, 6, 1, 49, 963, DateTimeKind.Local).AddTicks(3662), "https://images.dealersync.com/cloud/userdocumentprod/2539/Photos/739007/20211111220319765_IMG_0941%20%282%29.jpg?_=69a6fb4e56f60fad1b05f3454c24fd6876d54cad", "Mini", "Cooper Countryman", 3000.0, "Coupé/Deportivo", false }
                 });
 
             migrationBuilder.CreateIndex(

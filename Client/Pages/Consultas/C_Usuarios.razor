@@ -7,7 +7,7 @@
 <div class="card">
     <div class="card">
         <div class="card-header">
-            <h3> Consulta de Usuarios </h3>
+            <h3> Listado de usuarios </h3>
         </div>
 
         <div class="card-body">
@@ -43,6 +43,7 @@
                         <th>Nombre Completo</th>
                         <th>Nombre de Usuario</th>
                         <th>Email</th>
+                        <th>Rol</th>
                         <th>Fecha de Nacimiento</th>
                     </tr>
                 </thead>
@@ -54,6 +55,7 @@
                             <td>@item.NombreCompleto</td>
                             <td>@item.NombreUsuario</td>
                             <td>@item.Email</td>
+                            <td>@GetRolNombre(item.Rol)</td>
                             <td>@item.FechaNacimiento.ToString("dd/MM/yyyy")</td>
                             <td><a href="Usuarios/@item.UsuarioId">Ver</a></td>
                         </tr>
@@ -86,6 +88,7 @@
     protected override async Task OnInitializedAsync()
     {
        await Buscar();
+       await BuscarRoles();
     }
 
     public string GetRolNombre(int rolId)
