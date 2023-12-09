@@ -24,7 +24,7 @@ public class Vehiculos{
     public bool Vendido { get; set; } = false;
 
     [Required(ErrorMessage = "Este campo es necesario")]
-    [Range(0.01, 1000, ErrorMessage = "* El campo Precio debe estar entre 0.01 y 1000")]
+    [Range(1000, 20000, ErrorMessage = "* El campo Precio debe estar entre 1000 y 20000")]
     public double Precio { get; set; }
 
     public string? Imagen { get; set;}

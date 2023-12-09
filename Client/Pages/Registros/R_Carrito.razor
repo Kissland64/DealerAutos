@@ -8,6 +8,10 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @using System.Text.Json;
 
+<h1>Catálogo de vehículos:</h1>
+<h3>Selecciona el vehículos que quieres comprar para ver su información:</h3>
+<h1>--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------</h1>
+
 <div class="catalagos">
     <div class="container">
         <div class="row">
@@ -27,7 +31,7 @@
                             }
                         </div>
                         <div class="card-body">
-                            <h6><strong>Modelo del vehiculo</strong></h6>
+                            @* <h6><strong>Modelo del vehiculo</strong></h6>
                             <div class="mb-3">
                                 @item.Modelo
                             </div>
@@ -42,19 +46,20 @@
                             <h6><strong>Precio del vehiculo</strong></h6>
                             <div class="mb-3">
                                 <i class="oi oi-dollar" /> @item.Precio
-                            </div>
+                            </div> *@
+                        </div>
                             @if (usuarioAutenticadoService.Usuarios != null &&
                                 usuarioAutenticadoService.Usuarios.Compras.Any(c => c.VehiculoId == item.VehiculoId))
                             {
                                 <p><i class="oi oi-check" /> ¡Añadido en el carrito!</p>
                             }
-                        </div>
                     </div>
                 </div>
             }
         </div>
     </div>
 </div>
+<h1>--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------</h1>
 
 @code {
     public List<Vehiculos>? vehiculos { get; set; } = new List<Vehiculos>();

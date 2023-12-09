@@ -9,54 +9,97 @@
 @using DealerAutos.Client.Sesion
 @using DealerAutos.Client.Extensors
 
-<PageTitle>RussoCursos</PageTitle>
-
 <EditForm Model="vehiculos" OnValidSubmit="Guardar">
     <DataAnnotationsValidator />
 
     <div class="container ">
         <div class="card shadow-lg">
             <div class="card-header">
-                <h3>Registro de vehiculos.</h3>
+                <h3>Registro de vehículos.</h3>
             </div>
             <div class="card-body">
 
                 <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 col-xl-4 ">
-                    <label> Vehiculo Id:</label>
+                    <label> Vehículo Id:</label>
                     <div class="input-group mb-3">
                         <InputNumber @bind-Value="vehiculos.VehiculoId" class="form-control" aria-describedby="BotonBuscar" />
                         <button @onclick="Buscar" class="btn btn-outline-primary" type="button" id="BotonBuscar"><i class="oi oi-magnifying-glass" /></button>
                     </div>
                 </div>
-
-                <div class="mb-3 ">
-                    <label class="form-label" for="Modelo"><i class="oi oi-bookmark" /> Modelo del Vehiculo:</label>
-                    <InputText @bind-Value="vehiculos.Modelo" class="form-control " placeholder="Coloque un modelo para el vehiculo" />
-                    <ValidationMessage For="@(() => vehiculos.Modelo)" />
+                <div class="row">
+                    <div class="col">
+                        <label class="form-label" for="Modelo">
+                            <i class="oi oi-car"></i> Modelo del Vehículo:
+                        </label>
+                        <InputText @bind-Value="vehiculos.Modelo" class="form-control" placeholder="Coloque un modelo para el vehículo" />
+                        <ValidationMessage For="@(() => vehiculos.Modelo)" />
+                    </div>
+                    <div class="col">
+                        <label class="form-label" for="Fecha">
+                            <i class="oi oi-calendar"></i> Fecha:
+                        </label>
+                        <InputDate @bind-Value="vehiculos.Fecha" class="form-control" placeholder="Fecha en la que se agregó" />
+                        <ValidationMessage For="@(() => vehiculos.Fecha)" />
+                    </div>
                 </div>
 
-                <div class="mb-3">
-                    <label class="form-label " for="Fecha"><i class="oi oi-book" /> Fecha:</label>
-                    <InputDate @bind-Value="vehiculos.Fecha" class="form-control " placeholder="Fecha en la que se agrego" />
-                    <ValidationMessage For="@(() => vehiculos.Fecha)" />
+                <div class="row">
+                    <div class="col">
+                        <label class="form-label" for="Imagen">
+                            <i class="oi oi-image"></i> Imagen:
+                        </label>
+                        <InputFile OnChange="AsignarRutaImagen" class="form-control" accept=".png, .jpg, .jpeg" />
+                        <ValidationMessage For="@(() => vehiculos.Imagen)" />
+                    </div>
+
+                    <div class="col">
+                        <label class="form-label" for="Marca">
+                            <i class="oi oi-badge"></i> Marca:
+                        </label>
+                        <InputText @bind-Value="vehiculos.Marca" class="form-control" placeholder="Coloque la marca del vehículo" />
+                        <ValidationMessage For="@(() => vehiculos.Marca)" />
+                    </div>
                 </div>
 
-                <div class="mb-3">
-                    <label class="form-label" for="Imagen"><i class="oi oi-puzzle-piece" /> Imagen:</label>
-                    <InputFile OnChange="AsignarRutaImagen" class="form-control" accept=".png, .jpg, .jpeg" />
-                    <ValidationMessage For="@(() => vehiculos.Imagen)" />
+                <div class="row">
+                    <div class="col">
+                        <label class="form-label" for="Tipo">
+                            <i class="oi oi-tags"></i> Tipo:
+                        </label>
+                        <InputText @bind-Value="vehiculos.Tipo" class="form-control" placeholder="Coloque el tipo de vehículo" />
+                        <ValidationMessage For="@(() => vehiculos.Tipo)" />
+                    </div>
+
+                    <div class="col">
+                        <label class="form-label" for="Anio">
+                            <i class="oi oi-calendar"></i> Año del Vehículo:
+                        </label>
+                        <InputText @bind-Value="vehiculos.Anio" class="form-control" placeholder="Coloque el año del vehículo" />
+                        <ValidationMessage For="@(() => vehiculos.Anio)" />
+                    </div>
                 </div>
 
-                <div class="form-group mb-3">
-                    <label class="form-label" for="Marca"><i class="oi oi oi-check"/> Marca:</label>
-                    <InputText @bind-Value="vehiculos.Marca" class="form-control" placeholder="Coloque la marca del vehiculo" />
-                    <ValidationMessage For="@(() => vehiculos.Marca)" />
-                </div>
+                <div class="row">
+                    <div class="col">
+                        <label class="form-label" for="Precio">
+                            <i class="oi oi-dollar"></i> Precio:
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <div class="row-cols-xl-2">
+                                <InputNumber @bind-Value="vehiculos.Precio" class="form-control" placeholder="Coloque un precio" step="0.01" />
+                            </div>
+                        </div>
+                        <ValidationMessage For="@(() => vehiculos.Precio)" />
+                    </div>
 
-                <div class="form-group mb-3">
-                    <label class="form-label" for="Tipo"><i class="oi oi oi-check"/> Tipo:</label>
-                    <InputText @bind-Value="vehiculos.Tipo" class="form-control" placeholder="Coloque el tipo de vehiculo" />
-                    <ValidationMessage For="@(() => vehiculos.Tipo)" />
+                    <div class="col">
+                        <label class="form-label" for="Existencia">
+                            <i class="oi oi-box"></i> Cantidad:
+                        </label>
+                        <InputNumber @bind-Value="vehiculos.Existencia" class="form-control" placeholder="Coloque una cantidad para el vehículo" />
+                        <ValidationMessage For="@(() => vehiculos.Existencia)" />
+                    </div>
                 </div>
 
                 @* <div class="mb-3">
@@ -72,40 +115,14 @@
                         <ValidationMessage For="@(() => vehiculos.Tipo)" />
                     </label>
                 </div> *@
-
-                <div class="mb-3 ">
-                    <label class="form-label" for="Anio"><i class="oi oi-bookmark" /> Año del Vehiculo:</label>
-                    <InputText @bind-Value="vehiculos.Anio" class="form-control " placeholder="Coloque el año del vehiculo" />
-                    <ValidationMessage For="@(() => vehiculos.Anio)" />
-                </div>
-
-
-                <div class="mb-3">
-                    <label class="form-label" for="Precio"><i class="oi oi-dollar" /> Precio:</label>
-
-                    <div class="input-group">
-                        <span class="input-group-text">$</span>
-                        <div class="row-cols-xl-2">
-                            <InputNumber @bind-Value="vehiculos.Precio" class="form-control " placeholder="Coloque el un precio" step="0.01" />
-                        </div>
-                    </div>
-                    <ValidationMessage For="@(() => vehiculos.Precio)" />
-                </div>
-
-                <div class="mb-3 ">
-                    <label class="form-label" for="Existencia"><i class="oi oi-bookmark" /> Cantidad:</label>
-                    <InputNumber @bind-Value="vehiculos.Existencia" class="form-control " placeholder="Coloque una marca para el vehiculo" />
-                    <ValidationMessage For="@(() => vehiculos.Anio)" />
-                </div>
-
                 @* <button @onclick="AsignarRutaImagen">Asignar Imagen</button> *@
 
             </div>
             <div class="card-footer d-flex justify-content-center">
                 <div class="btn-group">
-                    <button type="button" class="btn btn-outline-primary" @onclick="Nuevo">Nuevo <i class="oi oi-file" /></button>
-                    <button type="submit" class="btn btn-outline-success">Guardar <i class="oi oi-document" /></button>
-                    <button type="button" class="btn btn-outline-danger" @onclick="Eliminar">Eliminar <i class="oi oi-trash" /></button>
+                    <button type="button" class="btn btn-outline-primary" @onclick="Nuevo">Nuevo <i class="oi oi-file"></i></button>
+                    <button type="submit" class="btn btn-outline-success">Guardar <i class="oi oi-document"></i></button>
+                    <button type="button" class="btn btn-outline-danger" @onclick="Eliminar">Eliminar <i class="oi oi-trash"></i></button>
                 </div>
             </div>
         </div>
@@ -128,13 +145,23 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await Buscar();
+        //await Buscar();
 
         if (VehiculoId > 0)
         {
             this.vehiculos.VehiculoId = VehiculoId;
             await Buscar();
         }
+    }
+
+    public void Nuevo()
+    {
+        this.vehiculos = new Vehiculos();
+        notificationService.ShowNotification(
+            titulo: "Nueva venta",
+            mensaje: "Se han limpiado los campos.",
+            NotificationSeverity.Info
+        );
     }
 
     public async Task Buscar()
@@ -151,6 +178,12 @@
                     this.vehiculos.VehiculoId = vehiculo.VehiculoId;
                 }
                 StateHasChanged();
+                notificationService.ShowNotification(
+                    titulo: "Búsqueda exitosa",
+                    mensaje: "Se encontró el vehiculo.",
+                    NotificationSeverity.Success
+                );
+
             }
             else
             {
@@ -163,7 +196,11 @@
         }
         catch (Exception ex)
         {
-            // Handle exception
+            notificationService.ShowNotification(
+                titulo: "Error de búsqueda",
+                mensaje: ex.Message,
+                NotificationSeverity.Error
+            );
         }
     }
 
@@ -171,11 +208,11 @@
     {
         try
         {
-            if (vehiculos.Precio <= 0.01 || vehiculos.Precio > 1000)
+            if (vehiculos.Precio <= 1000 || vehiculos.Precio > 20000)
             {
                 notificationService.ShowNotification(
                     titulo: "Error",
-                    mensaje: "El Precio debe estar entre 0.01 y 1000.",
+                    mensaje: "El Precio debe estar entre 1000 y 20000.",
                     NotificationSeverity.Error
                 );
                 return;
@@ -189,7 +226,6 @@
             }
             else
             {
-                // Create new record
                 response = await httpClient.PostAsJsonAsync("api/Vehiculos", vehiculos);
             }
 
@@ -199,8 +235,7 @@
 
                 if (exito is not null)
                 {
-                    this.vehiculos = exito;
-                    Nuevo();
+                    this.vehiculos = new Vehiculos();
                     notificationService.ShowNotification(
                         titulo: "Éxito",
                         mensaje: "Registro guardado",
@@ -220,19 +255,13 @@
         }
         catch (Exception ex)
         {
-            Nuevo();
+            this.vehiculos = new Vehiculos();
             notificationService.ShowNotification(
                 titulo: "Error",
                 mensaje: "Ocurrió un error al guardar: " + ex.Message,
                 NotificationSeverity.Error
             );
         }
-    }
-
-    public void Nuevo()
-    {
-        this.vehiculos = new Vehiculos();
-        this.vehiculos.VehiculoId = 0;
     }
 
     public async Task Eliminar()

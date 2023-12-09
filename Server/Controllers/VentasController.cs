@@ -115,7 +115,7 @@ namespace DealerAutos.Client.Controllers
                 if (vehiculo != null)
                 {
                     detalle.Cantidad++;
-                    vehiculo.Existencia -= detalle.Cantidad;
+                    //vehiculo.Existencia -= detalle.Cantidad;
                 }
                 detalle.Cantidad--;
             }
@@ -141,9 +141,8 @@ namespace DealerAutos.Client.Controllers
                 if (vehiculo != null)
                 {
                     detalle.Cantidad++;
-                    vehiculo.Existencia += detalle.Cantidad;
+                    //vehiculo.Existencia += detalle.Cantidad;
                 }
-                detalle.Cantidad--;
             }
 
             _context.Ventas.Remove(venta);

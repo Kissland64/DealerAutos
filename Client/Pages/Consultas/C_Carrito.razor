@@ -1,0 +1,181 @@
+﻿@page "/CarritoCompra"
+@using DealerAutos.Client.Sesion;
+@using DealerAutos.Client.Extensors
+@using System.Text.Json;
+@inject IJSRuntime jsRuntime
+@inject IUsuarioAutenticadoService usuarioAutenticadoService
+@inject NotificationService notificationService
+@inject HttpClient httpClient
+
+<PageTitle>Carrito de Compras</PageTitle>
+
+<div class="container shadow p-4">
+    <h3 class="mb-4">Carrito de compras</h3>
+
+    @if (carritoItems.Count == 0)
+    {
+        <p>Tu carrito de compras está vacío.</p>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Marca</th>
+                    <th>Modelo</th>
+                    <th>Tipo</th>
+                    <th>Año</th>
+                    <th>Fecha</th>
+                    <th>Precio</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var compra in carritoItems)
+                {
+                    <tr>
+                        <td>@compra.Marca</td>
+                        <td>@compra.Modelo</td>
+                        <td>@compra.Tipo</td>
+                        <td>@compra.Anio</td>
+                        <td>@compra.Fecha.ToString("dd/MM/yyyy")</td>
+                        <td>@compra.Precio.ToString("0.00")</td>
+                        <td>
+                            <button class="btn btn-outline-danger" @onclick="() => EliminarDelCarrito(compra.VehiculoId)">Eliminar</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <div class="text-right mt-4">
+            <h4>Precio Total: $@calcularPrecioTotal(carritoItems).ToString("0.00")</h4>
+        </div>
+        <div class="d-flex justify-content-center mt-3">
+            <button type="button" class="btn btn-outline-primary" @onclick="ComprarTodo">
+                Comprar todo <i class="oi oi-cart" />
+            </button>
+        </div>
+    }
+</div>
+
+
+@code {
+    public List<Vehiculos> carritoItems = new List<Vehiculos>();
+
+    private double calcularPrecioTotal(List<Vehiculos> vehiculos)
+    {
+        return vehiculos.Sum(c => c.Precio);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            await CargarCarrito();
+
+            var userJson = await jsRuntime.InvokeAsync<string>("localStorage.getItem", "user");
+            if (!string.IsNullOrEmpty(userJson))
+            {
+                usuarioAutenticadoService.Usuarios = JsonSerializer.Deserialize<Usuario>(userJson, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+            }
+        }
+        catch (Exception ex)
+        {
+
+            notificationService.ShowNotification(
+                 titulo: "Error",
+                 mensaje: "Registro no existe, por favor haga logout: ",
+                 NotificationSeverity.Error
+             );
+        }
+    }
+
+    private async Task CargarCarrito()
+    {
+        carritoItems.Clear();
+
+        foreach (var carrito in usuarioAutenticadoService.Usuarios.Compras)
+        {
+            try
+            {
+                var buscar = await httpClient.GetFromJsonAsync<Vehiculos>($"api/Vehiculos/{carrito.VehiculoId}");
+                if (buscar != null)
+                {
+                    carritoItems.Add(buscar);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al cargar el vehiculo {carrito.VehiculoId}: {ex.Message}");
+            }
+        }
+    }
+
+    private async Task EliminarDelCarrito(int vehiculoId)
+    {
+        var vehiculoAEliminar = carritoItems.FirstOrDefault(c => c.VehiculoId == vehiculoId);
+
+        if (vehiculoAEliminar != null)
+        {
+            usuarioAutenticadoService.RemoverVehiculosDelCarrito(vehiculoAEliminar);
+            await CargarCarrito();
+
+            notificationService.ShowNotification(
+                titulo: "Vehiculo eliminado",
+                mensaje: $"{vehiculoAEliminar.Modelo} ha sido eliminado del carrito.",
+                NotificationSeverity.Success
+            );
+        }
+    }
+
+    private async Task ComprarTodo()
+    {
+        var carritoItemsCopia = new List<Vehiculos>(carritoItems);
+
+        foreach (var compra in carritoItemsCopia)
+        {
+            await ComprarVehiculo(compra.VehiculoId);
+        }
+    }
+
+    private async Task ComprarVehiculo(int vehiculoId)
+    {
+        try
+        {
+            var compra = new Compras
+            {
+                UsuarioId = usuarioAutenticadoService.Usuarios.UsuarioId,
+                VehiculoId = vehiculoId,
+                Fecha = DateTime.Now
+            };
+
+            var response = await httpClient.PostAsJsonAsync("api/Compras", compra);
+
+            if (response.IsSuccessStatusCode)
+            {
+                EliminarDelCarrito(vehiculoId);
+
+                notificationService.ShowNotification(
+                    titulo: "Compra exitosa",
+                    mensaje: "Compra realizada con éxito.",
+                    NotificationSeverity.Success
+                );
+            }
+            else
+            {
+                notificationService.ShowNotification(
+                    titulo: "Error en la compra",
+                    mensaje: "Hubo un error al realizar la compra.",
+                    NotificationSeverity.Error
+                );
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al comprar el vehiculo {vehiculoId}: {ex.Message}");
+        }
+    }
+}

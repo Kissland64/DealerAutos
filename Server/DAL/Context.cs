@@ -32,7 +32,7 @@ public class Context : DbContext
             {VehiculoId = 5, Imagen = "https://www.gravityautossandysprings.com/galleria_images/2185/2185_main_l.jpg",
             Marca ="Ford Mustang", Modelo ="PREMIUM", Tipo ="Deportivo", Anio ="2010", Precio = 6700, Existencia = 5,},
             new Vehiculos
-            {VehiculoId = 6, Imagen = "https://img.supercarros.com/AdsPhotos/500x500/0/9819611.jpg",
+            {VehiculoId = 6, Imagen = "https://img.supercarros.com/AdsPhotos/1024x768/0/11145289.jpg?wmo=08ba5e0a5f4c288ae8e9e6a1dd4b7e5962c1cab6b6265e400f229da56f718809cf87e80713186756a4df4a205b1655e81d4bb982212a95d7a746b9ebc17c6f91",
             Marca ="Hyundai", Modelo ="Sonata New Rise", Tipo ="Sedán", Anio ="2018", Precio = 5000, Existencia = 5,},
             new Vehiculos
             {VehiculoId = 7, Imagen = "https://espaillatmotors.com/wp-content/uploads/2023/02/1-10-scaled.jpg",
@@ -56,7 +56,7 @@ public class Context : DbContext
                 FechaNacimiento = new DateTime(2001, 4, 6),
                 NombreUsuario = "Admin",
                 Email = "admin@gmail.com",
-                Password = "Admin6423",
+                Password = "Admin(6423)",
                 Rol = 1 },
 
             new Usuario(){
@@ -65,7 +65,7 @@ public class Context : DbContext
                 FechaNacimiento = new DateTime(2002, 5, 8),
                 NombreUsuario = "Cliente",
                 Email = "Keury@gmail.com",
-                Password = "Keury6423",
+                Password = "Keury(6423)",
                 Rol = 2 },
         });
 

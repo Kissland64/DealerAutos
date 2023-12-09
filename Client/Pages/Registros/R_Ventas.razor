@@ -33,50 +33,65 @@
                     </div>
                 </div>
                 <div class="row">
-                        <div class="col">
-                            <div class="mb-3">
-                            <label class="form-label" for="Nombre">Nombre:</label>
+                    <div class="col">
+                        <div class="mb-3">
+                            <label class="form-label" for="Nombre">
+                                <i class="oi oi-person"></i> Nombre:
+                            </label>
                             <InputText @bind-Value="ventas.Nombre" class="form-control" />
                             <ValidationMessage For="() => ventas.Nombre" />
                         </div>
                     </div>
                     <div class="col">
                         <div class="mb-3">
-                        <label class="form-label" for="Apellido">Apellido:</label>
-                        <InputText @bind-Value="ventas.Apellido" class="form-control" />
-                        <ValidationMessage For="() => ventas.Apellido" />
+                            <label class="form-label" for="Apellido">
+                                <i class="oi oi-person"></i> Apellido:
+                            </label>
+                            <InputText @bind-Value="ventas.Apellido" class="form-control" />
+                            <ValidationMessage For="() => ventas.Apellido" />
+                        </div>
                     </div>
                 </div>
-                </div>
-                    <div class="row">
-                        <div class="col">
-                            <div class="mb-3">
-                            <label class="form-label" for="Cedula">Cédula:</label>
+
+                <div class="row">
+                    <div class="col">
+                        <div class="mb-3">
+                            <label class="form-label" for="Cedula">
+                                <i class="oi oi-credit-card"></i> Cédula:
+                            </label>
                             <InputText @bind-Value="ventas.Cedula" class="form-control" />
                             <ValidationMessage For="() => ventas.Cedula" />
                         </div>
                     </div>
                     <div class="col">
                         <div class="mb-3">
-                        <label class="form-label" for="Telefono">Teléfono:</label>
-                        <InputText @bind-Value="ventas.Telefono" class="form-control" />
-                        <ValidationMessage For="() => ventas.Telefono" />
+                            <label class="form-label" for="Telefono">
+                                <i class="oi oi-phone"></i> Teléfono:
+                            </label>
+                            <InputText @bind-Value="ventas.Telefono" class="form-control" />
+                            <ValidationMessage For="() => ventas.Telefono" />
+                        </div>
                     </div>
                 </div>
-                </div>
-                    <div class="row">
-                        <div class="col">
-                            <div class="mb-3">                                
-                            <label class="form-label" for="Direccion">Dirección:</label>
+
+                <div class="row">
+                    <div class="col">
+                        <div class="mb-3">
+                            <label class="form-label" for="Direccion">
+                                <i class="oi oi-location"></i> Dirección:
+                            </label>
                             <InputText @bind-Value="ventas.Direccion" class="form-control" />
                             <ValidationMessage For="() => ventas.Direccion" />
                         </div>
                     </div>
-                        <div class="col">
-                            <div class="mb-3">
-                            <label>DNI vendedor:</label>
+                    <div class="col">
+                        <div class="mb-3">
+                            <label>
+                                <i class="oi oi-document"></i> DNI vendedor:
+                            </label>
                             <InputSelect @bind-Value="ventas.EmpleadoId" class="form-select">
-                                @foreach (var item in L_Empleados)
+                            <option value="0"disabled selected>Selecciona</option>
+                                @foreach (var item in empleados)
                                 {
                                     <option value="@item.EmpleadoId">@item.DNI</option>
                                 }
@@ -85,13 +100,12 @@
                         </div>
                     </div>
                 </div>
-                
                 <hr>
                 <fieldset>
-                    <legend>Lista de vehiculos:</legend>
+                    <legend>Lista de Vehículos:</legend>
                     <div class="row">
                         <div class="col-4">
-                            <label for="SelectP">Vehiculos:</label>
+                            <label for="SelectP">Vehículos:</label>
                             <div class = "input-group">
                                 <RadzenDropDown class="form-control" Data="@L_Vehiculos.Where(p => p.VehiculoId != 5)" TextProperty="Modelo" ValueProperty="VehiculoId" @bind-Value="@vehiculosDetalles.VehiculoId"></RadzenDropDown>
                                 <button type="button" class="btn btn-dark" @onclick="AgregarDetalle">Agregar <i class="oi oi-plus" /></button> 
@@ -103,7 +117,7 @@
                         <thead>
                             <tr>
                                 <th>Imagen</th>
-                                <th>VehiculoId</th>
+                                <th>Vehículo</th>
                                 <th>Modelo</th>
                                 <th>Marca</th>
                                 <th>Tipo</th>
@@ -158,15 +172,26 @@
     public string Mensaje { get; set; } = string.Empty;
     public List<Vehiculos> L_Vehiculos { get; set; } = new List<Vehiculos>();
     public List<Empleados> L_Empleados { get; set; } = new List<Empleados>();
+    public IEnumerable<Empleados> empleados { get; set; } = Enumerable.Empty<Empleados>();
     public bool DetalleEliminado { get; set; } = false;
 
     protected override async Task OnInitializedAsync()
     {
         var vehiculos = await httpClient.GetFromJsonAsync<List<Vehiculos>>("api/Vehiculos");
-
+        await CargarDNI();
         if (vehiculos is not null)
         {
             L_Vehiculos = vehiculos;
+        }
+
+    }
+
+    private async Task CargarDNI()
+    {
+        var empleadoEncontrado = await httpClient.GetFromJsonAsync<IEnumerable<Empleados>>("api/Empleados");
+        if(empleadoEncontrado != null)
+        {
+            empleados = empleadoEncontrado;
         }
     }
 

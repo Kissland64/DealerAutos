@@ -5,10 +5,21 @@
     <div class="card">
 
         <div class="card-header">
-            <h3> Consulta de ventas </h3>
+            <h3> Listado de ventas </h3>
         </div>
         <div class="card-body">
             <form>
+                <div class="row">
+                    <div class="form-group col-3">
+                        <label>Desde</label>
+                        <InputDate @bind-Value="fechaDesde" class="form-control" />
+                    </div>
+                    <div class="form-group col-3">
+                        <label>Hasta</label>
+                        <InputDate @bind-Value="fechaHasta" class="form-control" />
+                    </div>
+                </div>
+                <h1></h1>
                 <div class="input-group d-flex align-items-end">
 
                     <InputSelect class="form-control col-2" @bind-Value="filtro">
@@ -80,6 +91,8 @@
     public int conteo { get; set; }
     public string filtro { get; set; }
     public string Criterio { get; set; }
+    private DateTime fechaDesde;
+    private DateTime fechaHasta;
 
     public async Task Buscar()
     {
