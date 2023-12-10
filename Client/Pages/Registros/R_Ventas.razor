@@ -261,11 +261,11 @@
 
             if (DetalleEliminado)
             {
-               
+
                 DetalleEliminado = false;
                 return;
             }
-            
+
             using var response = await httpClient.PostAsJsonAsync("api/Ventas", ventas);
             response.EnsureSuccessStatusCode();
             var exito = await response.Content.ReadFromJsonAsync<Ventas>();
@@ -299,15 +299,27 @@
         }
     }
 
-
-
     public async Task Eliminar()
     {
         try
         {
             using var response = await httpClient.DeleteAsync($"api/Ventas/{ventas.VentaId}");
             response.EnsureSuccessStatusCode();
+
+            foreach (var detalle in ventas.VehiculosDetalles)
+            {
+                var vehiculo = await BuscarVentas(detalle.VehiculoId);
+                if (vehiculo != null)
+                {
+                    vehiculo.Existencia += detalle.Cantidad;
+                    using var response1 = await httpClient.PutAsJsonAsync($"api/Vehiculos/{vehiculo.VehiculoId}", vehiculo);
+                    Console.WriteLine();
+                }
+            }
+
             Nuevo();
+            ventas.VehiculosDetalles.Clear();
+
             notificationService.ShowNotification(
                 titulo: "Eliminado",
                 mensaje: "La venta se ha eliminado correctamente",
@@ -337,6 +349,10 @@
     public bool ValidarDetalle()
     {
         if (vehiculosDetalles.VehiculoId < 0)
+        {
+            return false;
+        }
+        if (vehiculosDetalles.Existencia < 0)
         {
             return false;
         }
@@ -370,7 +386,7 @@
                 ventas.VehiculosDetalles.Add(vehiculosDetalles);
                 SetTotal();
 
-                vehiculo.Existencia -= vehiculosDetalles.Cantidad; // Restar la cantidad del detalle a la existencia del vehículo
+                vehiculo.Existencia -= vehiculosDetalles.Cantidad;
 
                 using var response = await httpClient.PutAsJsonAsync($"api/Vehiculos/{vehiculosDetalles.VehiculoId}", vehiculo);
 
@@ -393,21 +409,34 @@
         }
     }
 
-
-    public void EliminarDetalle(VehiculosDetalles vehiculosDetalles)
+    public async Task EliminarDetalle(VehiculosDetalles vehiculosDetalles)
     {
-        this.ventas.VehiculosDetalles.Remove(vehiculosDetalles);
-        SetTotal();
-        DetalleEliminado = true;
-
-        foreach (var detalle in ventas.VehiculosDetalles)
+        try
         {
-            var vehiculo = L_Vehiculos.FirstOrDefault(v => v.VehiculoId == detalle.VehiculoId);
-            vehiculo.Existencia += detalle.Cantidad;
-        }
+            this.ventas.VehiculosDetalles.Remove(vehiculosDetalles);
+            SetTotal();
+            DetalleEliminado = true;
 
-        // Sumar la cantidad del detalle eliminado a la existencia del vehículo
-        var vehiculoEliminado = L_Vehiculos.FirstOrDefault(v => v.VehiculoId == vehiculosDetalles.VehiculoId);
-        vehiculoEliminado.Existencia += vehiculosDetalles.Cantidad;
+            foreach (var detalle in ventas.VehiculosDetalles)
+            {
+                var vehiculo = await BuscarVentas(detalle.VehiculoId);
+                if (vehiculo != null)
+                {
+                    vehiculo.Existencia += detalle.Cantidad;
+                    await httpClient.PutAsJsonAsync($"api/Vehiculos/{vehiculo.VehiculoId}", vehiculo);
+                }
+            }
+
+            var vehiculoEliminado = await BuscarVentas(vehiculosDetalles.VehiculoId);
+            vehiculoEliminado.Existencia += vehiculosDetalles.Cantidad;
+        }
+        catch (Exception ex)
+        {
+            notificationService.ShowNotification(
+                titulo: "Error al eliminar detalle",
+                mensaje: ex.Message,
+                NotificationSeverity.Error
+            );
+        }
     }
 }

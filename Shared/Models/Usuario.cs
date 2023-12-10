@@ -13,11 +13,13 @@ public class Usuario
     public int UsuarioId { get; set; }
 
     [Required(ErrorMessage = "* El campo Nombre Completo es obligatorio")]
+    [RegularExpression(@"^[a-zA-Z\s]+$", ErrorMessage = "Este campo no acepta digitos")]
     public string? NombreCompleto { get; set; }
 
     public DateTime FechaNacimiento { get; set; } = DateTime.Now;
 
     [Required(ErrorMessage = "* El campo Nombre de Usuario es obligatorio")]
+    [StringLength(15, ErrorMessage = "La longitud máxima para el nombre de usuario es de 15 caracteres.")]
     public string? NombreUsuario { get; set; }
 
     [NotMapped]

@@ -14,9 +14,6 @@ namespace DealerAutos.Server.Controllers
             _context = context;
         }
 
-
-        
-
         public bool ComprasExiste(int id)
         {
             return (_context.Compras?.Any(c => c.CompraId == id)).GetValueOrDefault();

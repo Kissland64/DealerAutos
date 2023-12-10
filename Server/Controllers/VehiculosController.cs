@@ -48,33 +48,33 @@ namespace DealerAutos.Server.Controllers
         // PUT: api/Vehiculos/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        // public async Task<IActionResult> PutVehiculo(int id, Vehiculos vehiculo)
-        // {
-        //     if (id != vehiculo.VehiculoId)
-        //     {
-        //         return BadRequest();
-        //     }
+        public async Task<IActionResult> PutVehiculo(int id, Vehiculos vehiculo)
+        {
+            if (id != vehiculo.VehiculoId)
+            {
+                return BadRequest();
+            }
 
-        //     _context.Entry(vehiculo).State = EntityState.Modified;
+            _context.Entry(vehiculo).State = EntityState.Modified;
 
-        //     try
-        //     {
-        //         await _context.SaveChangesAsync();
-        //     }
-        //     catch (DbUpdateConcurrencyException)
-        //     {
-        //         if (!VehiculoExists(id))
-        //         {
-        //             return NotFound();
-        //         }
-        //         else
-        //         {
-        //             throw;
-        //         }
-        //     }
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!VehiculoExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
 
-        //     return NoContent();
-        // }
+            return NoContent();
+        }
 
         // POST: api/Vehiculos
         [HttpPost]

@@ -220,15 +220,13 @@
 
             HttpResponseMessage response;
 
-            if (vehiculos.VehiculoId > 0)
-            {
-                response = await httpClient.PutAsJsonAsync($"api/Vehiculos/{vehiculos.VehiculoId}", vehiculos);
-            }
-            else
-            {
+            // if (vehiculos.VehiculoId > 0)
+            // {
+            //     //response = await httpClient.PutAsJsonAsync($"api/Vehiculos/{vehiculos.VehiculoId}", vehiculos);
+            // }
+            // else
+     
                 response = await httpClient.PostAsJsonAsync("api/Vehiculos", vehiculos);
-            }
-
             if (response.IsSuccessStatusCode)
             {
                 var exito = await response.Content.ReadFromJsonAsync<Vehiculos>();

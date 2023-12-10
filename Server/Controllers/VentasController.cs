@@ -153,7 +153,7 @@ namespace DealerAutos.Client.Controllers
                         vehiculo.Existencia += detalle.Cantidad;
                     }
                 }
-
+                
                 _context.Ventas.Remove(venta);
                 await _context.SaveChangesAsync();
                 return NoContent();
