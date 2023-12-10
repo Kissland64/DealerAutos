@@ -11,5 +11,6 @@ cual podemos hacer click en la imagen y ver su informacion.
 
 Una vez que ya hicimos click en la imagen podemos ver lo que es
 la marca del vehiculo, modelo, tipo, el año y el precio de este mismo.
+Por lo ultimo tenemos lo que es el boton para agregar al carrito y volver atras, que seria nuestro catalogo
 
 ![Screenshot 2023-12-10 153102](https://github.com/Kissland64/DealerAutos/assets/132521167/cb1fe82d-f27a-4b15-9823-cab751f92b69)
