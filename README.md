@@ -7,7 +7,7 @@ Link del video: https://youtu.be/ILQorq6-X_E?si=Pwff5kQwsBV9whCp
 ![Screenshot 2023-12-10 152847](https://github.com/Kissland64/DealerAutos/assets/132521167/914f3fc8-506e-4c95-aede-567e024ddc96)
 
 Aqui tenemos lo que es nuestro catalogo de vehiculos en el 
-cual podemos hacer click en la imagen y ver su informacion.
+cual podemos hacer click en la imagen y ver la informacion del vehiculo.
 
 ![Screenshot 2023-12-10 152947](https://github.com/Kissland64/DealerAutos/assets/132521167/fae10bd7-06e3-49b2-9fe7-34ec700ff7a9)
 
