@@ -14,3 +14,7 @@ la marca del vehiculo, modelo, tipo, el año y el precio de este mismo.
 Por lo ultimo tenemos lo que es el boton para agregar al carrito y volver atras, que seria nuestro catalogo
 
 ![Screenshot 2023-12-10 153102](https://github.com/Kissland64/DealerAutos/assets/132521167/cb1fe82d-f27a-4b15-9823-cab751f92b69)
+
+Una vez ya hemos agrego vehiculos a nuestro carrito, podemos ver lo que son los datos del vehiculo
+y el total del precio por los vehiculos que hayamos agregado, por ultimo tenemos tenemos nuestro boton
+de comprar todo, que al momento de hacer click se procesa la compra y se limpia nuestro carrito de compras.
