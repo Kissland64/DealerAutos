@@ -25,10 +25,20 @@ de comprar todo, que al momento de hacer click se procesa la compra y se limpia 
 ![Screenshot 2023-12-10 153151](https://github.com/Kissland64/DealerAutos/assets/132521167/14cffbaa-b46d-444e-a951-cc101f07f27d)
 
 Aqui tenemos lo que es nuestro registro de empleados en el cual podemos ingresar lo siguientes campos que son, nombre, apellido,
-DNI del empleado, cédula, numero télefono y dirección. Aqui tambien tenemo lo que es el boton de busqueda en la parte de arriba,
+DNI del empleado, cédula, numero télefono y dirección. Aqui tambien tenemos lo que es el boton de busqueda en la parte de arriba,
 para buscar al empleado registrado por su Id, el boton de guardar la informacion y para eliminar dicha informacion.
 
 ![Screenshot 2023-12-10 153703](https://github.com/Kissland64/DealerAutos/assets/132521167/d8e0be10-00d0-48a4-8d3c-d9868243682f)
 
 Aqui tenemos lo que es nuestra lista de empleados con sus campos respectivos, en la parte de arriba a la izquierda tenemos un
 menu seleccionable sobre el campo el cual queremos buscar y su derecha esta la barra de busqueda donde vamos a ingresar lo que queremos buscar.
+
+# Registro de vehiculos y el inventario:
+![Screenshot 2023-12-10 153243](https://github.com/Kissland64/DealerAutos/assets/132521167/b8033f21-1c4e-4779-ab49-9e19485f6393)
+
+Aqui tenemos lo que es nuestro registro de vehiculos en el cual podemos ingresar lo siguientes campos que son, Modelo, Marca,
+imagen del vehiculo, la fecha en la que se registro, el tipo de vehiculo, año del vehiculo, precio y cantidad. Aqui tambien tenemos lo que es el boton de busqueda en la parte de arriba,
+para buscar el vehiculo registrado por su Id, el boton de guardar la informacion y para eliminar dicha informacion.
+
+![image](https://github.com/Kissland64/DealerAutos/assets/132521167/d8e16ca4-2c28-4151-9e17-4ea6a2c25b21)
+
