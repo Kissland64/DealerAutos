@@ -35,14 +35,18 @@ namespace DealerAutos.Server.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Vehiculos>> GetVehiculo(int id)
         {
-            var vehiculo = await _context.Vehiculos.FindAsync(id);
+            if (_context.Vehiculos == null)
+            {
+                return NotFound();
+            }
+            var vehiculos = await _context.Vehiculos.FindAsync(id);
 
-            if (vehiculo == null)
+            if (vehiculos == null)
             {
                 return NotFound();
             }
 
-            return Ok(vehiculo);
+            return vehiculos;
         }
 
         // PUT: api/Vehiculos/5

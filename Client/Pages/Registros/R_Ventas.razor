@@ -308,7 +308,7 @@
 
             foreach (var detalle in ventas.VehiculosDetalles)
             {
-                var vehiculo = await BuscarVentas(detalle.VehiculoId);
+                var vehiculo = await BuscarVehiculo(detalle.VehiculoId);
                 if (vehiculo != null)
                 {
                     vehiculo.Existencia += detalle.Cantidad;
@@ -362,7 +362,7 @@
         }
     }
 
-    private async Task<Vehiculos> BuscarVentas(int VehiculoId)
+    private async Task<Vehiculos> BuscarVehiculo(int VehiculoId)
     {
         var vehiculos = await httpClient.GetFromJsonAsync<Vehiculos>($"api/Vehiculos/{VehiculoId}");
 
@@ -419,7 +419,7 @@
 
             foreach (var detalle in ventas.VehiculosDetalles)
             {
-                var vehiculo = await BuscarVentas(detalle.VehiculoId);
+                var vehiculo = await BuscarVehiculo(detalle.VehiculoId);
                 if (vehiculo != null)
                 {
                     vehiculo.Existencia += detalle.Cantidad;
@@ -427,7 +427,7 @@
                 }
             }
 
-            var vehiculoEliminado = await BuscarVentas(vehiculosDetalles.VehiculoId);
+            var vehiculoEliminado = await BuscarVehiculo(vehiculosDetalles.VehiculoId);
             vehiculoEliminado.Existencia += vehiculosDetalles.Cantidad;
         }
         catch (Exception ex)

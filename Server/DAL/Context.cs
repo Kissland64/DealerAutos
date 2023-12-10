@@ -63,7 +63,7 @@ public class Context : DbContext
                 UsuarioId = 2,
                 NombreCompleto = "Keury Rodriguez",
                 FechaNacimiento = new DateTime(2002, 5, 8),
-                NombreUsuario = "Cliente",
+                NombreUsuario = "KR64",
                 Email = "Keury@gmail.com",
                 Password = "Keury(6423)",
                 Rol = 2 },
