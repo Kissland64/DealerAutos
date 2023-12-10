@@ -1,5 +1,6 @@
 # DealerAutos
 Este proyecto fue creado a con la finalidad de hacer un sistema de ventas y control de inventario de los vehiculos.
+Link del video: https://youtu.be/ILQorq6-X_E?si=Pwff5kQwsBV9whCp
 
 # Tienda:
 ![Screenshot 2023-12-10 152847](https://github.com/Kissland64/DealerAutos/assets/132521167/914f3fc8-506e-4c95-aede-567e024ddc96)
