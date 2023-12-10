@@ -1,20 +1,28 @@
-﻿@inherits LayoutComponentBase
-@using DealerAutos.Client.Extensiones;
-@using Microsoft.AspNetCore.Components.Authorization;
-@inject AuthenticationStateProvider autenticacionProvider
-@inject NavigationManager navManager
+﻿@using DealerAutos.Client.Sesion
+@inherits LayoutComponentBase
+@inject IUsuarioAutenticadoService usuarioAutenticadoService
+@inject IJSRuntime jsRuntime
+@inject NavigationManager NavigationManager
 
+<RadzenDialog />
 <RadzenNotification />
+<RadzenContextMenu />
+<RadzenTooltip />
+
 <div class="page">
     <div class="sidebar">
         <NavMenu />
     </div>
 
     <main>
-        <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-            <a @onclick="CerrarSesion" href="javascript:void(0)">Salir</a>
-        </div>
+        @if (usuarioAutenticadoService.Usuarios != null)
+        {
+            <div class="top-row px-4">
+                <a href="CarritoCompra" class="mr-2 mx-3"><i class="oi oi-cart"/> (@usuarioAutenticadoService.Usuarios.Compras.Count) </a>
+                <span>¡Bienvenido, @usuarioAutenticadoService.Usuarios.NombreUsuario!</span>
+                <button @onclick="CerrarSesion" class="btn btn-link"><i class="oi oi-account-logout" /> Cerrar Sesión</button>
+            </div>
+        }
 
         <article class="content px-4">
             @Body
@@ -22,12 +30,11 @@
     </main>
 </div>
 
-@code{
-
+@code {
     private async Task CerrarSesion()
     {
-        var autenticacionExt = (AutenticacionExtension)autenticacionProvider;
-        await autenticacionExt.ActualizarEstadoAutenticacion(null);
-        navManager.NavigateTo("/", true);
+        usuarioAutenticadoService.Usuarios = null;
+        await jsRuntime.InvokeVoidAsync("localStorage.removeItem", "user");
+        NavigationManager.NavigateTo("/"); 
     }
 }

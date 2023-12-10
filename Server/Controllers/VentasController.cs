@@ -1,6 +1,9 @@
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace DealerAutos.Client.Controllers
 {
@@ -15,9 +18,9 @@ namespace DealerAutos.Client.Controllers
             _context = context;
         }
 
-        public bool Existe(int VentaId)
+        private bool Existe(int VentaId)
         {
-            return (_context.Ventas?.Any(v => v.VentaId == VentaId)).GetValueOrDefault();
+            return _context.Ventas.Any(v => v.VentaId == VentaId);
         }
 
         [HttpGet]
@@ -39,41 +42,126 @@ namespace DealerAutos.Client.Controllers
             return venta;
         }
 
+        [HttpPut("{id}")]
+        public async Task<IActionResult> ActualizarVehiculo(int id, [FromBody] Vehiculos vehiculo)
+        {
+            try
+            {
+                var vehiculoExistente = await _context.Vehiculos.FindAsync(id);
+
+                if (vehiculoExistente == null)
+                {
+                    return NotFound();
+                }
+
+                vehiculoExistente.Precio = vehiculo.Precio;
+                vehiculoExistente.Existencia = vehiculo.Existencia;
+
+                _context.Vehiculos.Update(vehiculoExistente);
+                await _context.SaveChangesAsync();
+
+                return Ok(vehiculoExistente);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
+            }
+        }
+
         [HttpPost]
         public async Task<ActionResult<Ventas>> PostVentas(Ventas ventas)
         {
-            if (!Existe(ventas.VentaId))
+            try
             {
-                await _context.Ventas.AddAsync(ventas);
-            }
-            else
-            {
-                Ventas Anterior = await _context.Ventas.Include(v => v.VehiculosDetalles).AsNoTracking().SingleOrDefaultAsync(v => v.VentaId == ventas.VentaId);
-                if(Anterior != null)
+                if (!Existe(ventas.VentaId))
                 {
-                    _context.RemoveRange(Anterior.VehiculosDetalles);
-                    await _context.SaveChangesAsync();
-                    await _context.AddRangeAsync(ventas.VehiculosDetalles);
-                    _context.Update(ventas);
+                    await _context.Ventas.AddAsync(ventas);
+                    foreach (var detalle in ventas.VehiculosDetalles)
+                    {
+                        var vehiculo = await _context.Vehiculos.FindAsync(detalle.VehiculoId);
+                        if (vehiculo != null)
+                        {
+                            vehiculo.Existencia -= detalle.Cantidad;
+                        }
+                    }
                 }
+                else
+                {
+                    Ventas Anterior = await _context.Ventas
+                        .Include(v => v.VehiculosDetalles)
+                        .AsNoTracking()
+                        .SingleOrDefaultAsync(v => v.VentaId == ventas.VentaId);
+
+                    if (Anterior != null)
+                    {
+                        foreach (var detalle in Anterior.VehiculosDetalles)
+                        {
+                            var vehiculoAnterior = await _context.Vehiculos.FindAsync(detalle.VehiculoId);
+                            if (vehiculoAnterior != null)
+                            {
+                                detalle.Cantidad++;
+                                vehiculoAnterior.Existencia += detalle.Cantidad;
+                            }
+                            detalle.Cantidad--;
+                        }
+
+                        _context.RemoveRange(Anterior.VehiculosDetalles);
+                        await _context.SaveChangesAsync();
+                        await _context.AddRangeAsync(ventas.VehiculosDetalles);
+
+                        _context.Update(ventas);
+                    }
+                }
+
+                foreach (var detalle in ventas.VehiculosDetalles)
+                {
+                    var vehiculo = await _context.Vehiculos.FindAsync(detalle.VehiculoId);
+                    if (vehiculo != null)
+                    {
+                        detalle.Cantidad++;
+                        vehiculo.Existencia -= detalle.Cantidad;
+                    }
+                    detalle.Cantidad--;
+                }
+
+                await _context.SaveChangesAsync();
+                return Ok(ventas);
             }
-            await _context.SaveChangesAsync();
-            return Ok(ventas);
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
+            }
         }
 
         [HttpDelete("{VentaId}")]
         public async Task<IActionResult> EliminarVenta(int VentaId)
         {
-            var venta = await _context.Ventas.Include(v => v.VehiculosDetalles).FirstOrDefaultAsync(v => v.VentaId == VentaId);
-
-            if (venta == null)
+            try
             {
-                return NotFound();
-            }
+                var venta = await _context.Ventas.Include(v => v.VehiculosDetalles).FirstOrDefaultAsync(v => v.VentaId == VentaId);
 
-            _context.Ventas.Remove(venta);
-            await _context.SaveChangesAsync();
-            return NoContent();
+                if (venta == null)
+                {
+                    return NotFound();
+                }
+
+                foreach (var detalle in venta.VehiculosDetalles)
+                {
+                    var vehiculo = await _context.Vehiculos.FindAsync(detalle.VehiculoId);
+                    if (vehiculo != null)
+                    {
+                        vehiculo.Existencia += detalle.Cantidad;
+                    }
+                }
+                
+                _context.Ventas.Remove(venta);
+                await _context.SaveChangesAsync();
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
+            }
         }
     }
 }

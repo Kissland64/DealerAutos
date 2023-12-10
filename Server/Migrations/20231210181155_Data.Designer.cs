@@ -10,18 +10,40 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DealerAutos.Server.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20230807213243_Inicial")]
-    partial class Inicial
+    [Migration("20231210181155_Data")]
+    partial class Data
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "7.0.9");
+            modelBuilder.HasAnnotation("ProductVersion", "7.0.12");
 
-            modelBuilder.Entity("Clientes", b =>
+            modelBuilder.Entity("Compras", b =>
                 {
-                    b.Property<int>("ClienteId")
+                    b.Property<int>("CompraId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("VehiculoId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("CompraId");
+
+                    b.HasIndex("UsuarioId");
+
+                    b.ToTable("Compras");
+                });
+
+            modelBuilder.Entity("Empleados", b =>
+                {
+                    b.Property<int>("EmpleadoId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -29,18 +51,17 @@ namespace DealerAutos.Server.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<double>("CantidadAdquirida")
-                        .HasColumnType("REAL");
-
                     b.Property<string>("Cedula")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DNI")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Direccion")
                         .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("Fecha")
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Nombre")
@@ -51,102 +72,96 @@ namespace DealerAutos.Server.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("VehiculoId")
-                        .HasColumnType("INTEGER");
+                    b.HasKey("EmpleadoId");
 
-                    b.HasKey("ClienteId");
-
-                    b.ToTable("Clientes");
+                    b.ToTable("Empleados");
                 });
 
-            modelBuilder.Entity("CompraDetalles", b =>
+            modelBuilder.Entity("Rol", b =>
                 {
-                    b.Property<int>("DetalleId")
+                    b.Property<int>("RolId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<double>("Cantidad")
-                        .HasColumnType("REAL");
+                    b.Property<string>("NombreRol")
+                        .HasColumnType("TEXT");
 
-                    b.Property<int>("CompraId")
-                        .HasColumnType("INTEGER");
+                    b.HasKey("RolId");
 
-                    b.Property<double>("Precio")
-                        .HasColumnType("REAL");
+                    b.ToTable("Roles");
 
-                    b.Property<int>("VehiculoId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("DetalleId");
-
-                    b.HasIndex("CompraId");
-
-                    b.ToTable("CompraDetalles");
+                    b.HasData(
+                        new
+                        {
+                            RolId = 1,
+                            NombreRol = "Administrador"
+                        },
+                        new
+                        {
+                            RolId = 2,
+                            NombreRol = "Empleado"
+                        },
+                        new
+                        {
+                            RolId = 3,
+                            NombreRol = "Cliente"
+                        });
                 });
 
-            modelBuilder.Entity("Compras", b =>
+            modelBuilder.Entity("Usuario", b =>
                 {
-                    b.Property<int>("CompraId")
+                    b.Property<int>("UsuarioId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("FechaCompra")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Marca")
+                    b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Modelo")
+                    b.Property<DateTime>("FechaNacimiento")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NombreCompleto")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("NombreComprador")
+                    b.Property<string>("NombreUsuario")
+                        .IsRequired()
+                        .HasMaxLength(15)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Tipo")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("Rol")
+                        .HasColumnType("INTEGER");
 
-                    b.Property<double>("Total")
-                        .HasColumnType("REAL");
+                    b.HasKey("UsuarioId");
 
-                    b.HasKey("CompraId");
+                    b.ToTable("Usuarios");
 
-                    b.ToTable("Compras");
-                });
-
-            modelBuilder.Entity("DealerAutos.Shared.LoginDTO", b =>
-                {
-                    b.Property<string>("Correo")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Clave")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Correo");
-
-                    b.ToTable("LoginDTO");
-                });
-
-            modelBuilder.Entity("DealerAutos.Shared.SesionDTO", b =>
-                {
-                    b.Property<string>("Nombre")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Correo")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Rol")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Nombre");
-
-                    b.ToTable("SesionDTO");
+                    b.HasData(
+                        new
+                        {
+                            UsuarioId = 1,
+                            Email = "admin@gmail.com",
+                            FechaNacimiento = new DateTime(2001, 4, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            NombreCompleto = "Kissland Baker",
+                            NombreUsuario = "Admin",
+                            Password = "Admin(6423)",
+                            Rol = 1
+                        },
+                        new
+                        {
+                            UsuarioId = 2,
+                            Email = "Keury@gmail.com",
+                            FechaNacimiento = new DateTime(2002, 5, 8, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            NombreCompleto = "Keury Rodriguez",
+                            NombreUsuario = "KR64",
+                            Password = "Keury(6423)",
+                            Rol = 2
+                        });
                 });
 
             modelBuilder.Entity("Vehiculos", b =>
@@ -158,6 +173,9 @@ namespace DealerAutos.Server.Migrations
                     b.Property<string>("Anio")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<double>("Existencia")
+                        .HasColumnType("REAL");
 
                     b.Property<DateTime>("Fecha")
                         .HasColumnType("TEXT");
@@ -171,6 +189,7 @@ namespace DealerAutos.Server.Migrations
 
                     b.Property<string>("Modelo")
                         .IsRequired()
+                        .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
                     b.Property<double>("Precio")
@@ -178,6 +197,7 @@ namespace DealerAutos.Server.Migrations
 
                     b.Property<string>("Tipo")
                         .IsRequired()
+                        .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("Vendido")
@@ -192,7 +212,8 @@ namespace DealerAutos.Server.Migrations
                         {
                             VehiculoId = 1,
                             Anio = "2021",
-                            Fecha = new DateTime(2023, 8, 7, 17, 32, 43, 775, DateTimeKind.Local).AddTicks(2208),
+                            Existencia = 5.0,
+                            Fecha = new DateTime(2023, 12, 10, 14, 11, 55, 488, DateTimeKind.Local).AddTicks(9344),
                             Imagen = "https://www.motortrend.com/uploads/sites/5/2021/06/2021-Honda-CR-V-Touring.jpg",
                             Marca = "Honda",
                             Modelo = "CR-V",
@@ -204,7 +225,8 @@ namespace DealerAutos.Server.Migrations
                         {
                             VehiculoId = 2,
                             Anio = "2022",
-                            Fecha = new DateTime(2023, 8, 7, 17, 32, 43, 775, DateTimeKind.Local).AddTicks(2224),
+                            Existencia = 5.0,
+                            Fecha = new DateTime(2023, 12, 10, 14, 11, 55, 488, DateTimeKind.Local).AddTicks(9369),
                             Imagen = "https://www.yankodesign.com/images/design_news/2022/12/first-drive-new-honda-civic-type-r/2022_Honda_Civic-Type-R_Review_yankodesign_Hero.jpg",
                             Marca = "Honda",
                             Modelo = "Civic",
@@ -216,7 +238,8 @@ namespace DealerAutos.Server.Migrations
                         {
                             VehiculoId = 3,
                             Anio = "2023",
-                            Fecha = new DateTime(2023, 8, 7, 17, 32, 43, 775, DateTimeKind.Local).AddTicks(2225),
+                            Existencia = 5.0,
+                            Fecha = new DateTime(2023, 12, 10, 14, 11, 55, 488, DateTimeKind.Local).AddTicks(9372),
                             Imagen = "https://images.drive.com.au/driveau/image/upload/c_fill,f_auto,g_auto,h_675,q_auto:eco,w_1200/v1/cms/uploads/a7tgfapzsadx4m3zstqm",
                             Marca = "Isuzu",
                             Modelo = "D-MAX",
@@ -228,10 +251,11 @@ namespace DealerAutos.Server.Migrations
                         {
                             VehiculoId = 4,
                             Anio = "2023",
-                            Fecha = new DateTime(2023, 8, 7, 17, 32, 43, 775, DateTimeKind.Local).AddTicks(2227),
+                            Existencia = 5.0,
+                            Fecha = new DateTime(2023, 12, 10, 14, 11, 55, 488, DateTimeKind.Local).AddTicks(9409),
                             Imagen = "https://www.motortrend.com/uploads/2022/05/2023-Audi-A3-003-front-three-quarter-view.jpg",
                             Marca = "Audi",
-                            Modelo = "A3 S-Line",
+                            Modelo = "A3_S-Line",
                             Precio = 9500.0,
                             Tipo = "Compacto",
                             Vendido = false
@@ -240,9 +264,10 @@ namespace DealerAutos.Server.Migrations
                         {
                             VehiculoId = 5,
                             Anio = "2010",
-                            Fecha = new DateTime(2023, 8, 7, 17, 32, 43, 775, DateTimeKind.Local).AddTicks(2228),
+                            Existencia = 5.0,
+                            Fecha = new DateTime(2023, 12, 10, 14, 11, 55, 488, DateTimeKind.Local).AddTicks(9411),
                             Imagen = "https://www.gravityautossandysprings.com/galleria_images/2185/2185_main_l.jpg",
-                            Marca = "Ford Mustang",
+                            Marca = "Ford_Mustang",
                             Modelo = "PREMIUM",
                             Precio = 6700.0,
                             Tipo = "Deportivo",
@@ -252,8 +277,9 @@ namespace DealerAutos.Server.Migrations
                         {
                             VehiculoId = 6,
                             Anio = "2018",
-                            Fecha = new DateTime(2023, 8, 7, 17, 32, 43, 775, DateTimeKind.Local).AddTicks(2231),
-                            Imagen = "https://img.supercarros.com/AdsPhotos/500x500/0/9819611.jpg",
+                            Existencia = 5.0,
+                            Fecha = new DateTime(2023, 12, 10, 14, 11, 55, 488, DateTimeKind.Local).AddTicks(9416),
+                            Imagen = "https://img.supercarros.com/AdsPhotos/1024x768/0/11145289.jpg?wmo=08ba5e0a5f4c288ae8e9e6a1dd4b7e5962c1cab6b6265e400f229da56f718809cf87e80713186756a4df4a205b1655e81d4bb982212a95d7a746b9ebc17c6f91",
                             Marca = "Hyundai",
                             Modelo = "Sonata New Rise",
                             Precio = 5000.0,
@@ -264,7 +290,8 @@ namespace DealerAutos.Server.Migrations
                         {
                             VehiculoId = 7,
                             Anio = "2023",
-                            Fecha = new DateTime(2023, 8, 7, 17, 32, 43, 775, DateTimeKind.Local).AddTicks(2233),
+                            Existencia = 5.0,
+                            Fecha = new DateTime(2023, 12, 10, 14, 11, 55, 488, DateTimeKind.Local).AddTicks(9418),
                             Imagen = "https://espaillatmotors.com/wp-content/uploads/2023/02/1-10-scaled.jpg",
                             Marca = "SWM",
                             Modelo = "G01F",
@@ -276,9 +303,10 @@ namespace DealerAutos.Server.Migrations
                         {
                             VehiculoId = 8,
                             Anio = "2020",
-                            Fecha = new DateTime(2023, 8, 7, 17, 32, 43, 775, DateTimeKind.Local).AddTicks(2234),
+                            Existencia = 5.0,
+                            Fecha = new DateTime(2023, 12, 10, 14, 11, 55, 488, DateTimeKind.Local).AddTicks(9420),
                             Imagen = "https://www.automotiveaddicts.com/wp-content/uploads/2020/11/2020-chevrolet-corvette.jpg",
-                            Marca = "Chevrolet Corvette",
+                            Marca = "Chevrolet_Corvette",
                             Modelo = "Stingray Z51",
                             Precio = 9000.0,
                             Tipo = "Deportivo",
@@ -288,7 +316,8 @@ namespace DealerAutos.Server.Migrations
                         {
                             VehiculoId = 9,
                             Anio = "2018",
-                            Fecha = new DateTime(2023, 8, 7, 17, 32, 43, 775, DateTimeKind.Local).AddTicks(2235),
+                            Existencia = 5.0,
+                            Fecha = new DateTime(2023, 12, 10, 14, 11, 55, 488, DateTimeKind.Local).AddTicks(9422),
                             Imagen = "https://cdn.motor1.com/images/mgl/YMkY0/s1/lanzamiento-kia-picanto-2018.jpg",
                             Marca = "Kia",
                             Modelo = "Picanto",
@@ -300,10 +329,11 @@ namespace DealerAutos.Server.Migrations
                         {
                             VehiculoId = 10,
                             Anio = "2016",
-                            Fecha = new DateTime(2023, 8, 7, 17, 32, 43, 775, DateTimeKind.Local).AddTicks(2237),
+                            Existencia = 5.0,
+                            Fecha = new DateTime(2023, 12, 10, 14, 11, 55, 488, DateTimeKind.Local).AddTicks(9425),
                             Imagen = "https://images.dealersync.com/cloud/userdocumentprod/2539/Photos/739007/20211111220319765_IMG_0941%20%282%29.jpg?_=69a6fb4e56f60fad1b05f3454c24fd6876d54cad",
                             Marca = "Mini",
-                            Modelo = "Cooper Countryman",
+                            Modelo = "Cooper_Countryman",
                             Precio = 3000.0,
                             Tipo = "Coupé/Deportivo",
                             Vendido = false
@@ -316,6 +346,15 @@ namespace DealerAutos.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<double>("Cantidad")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("CantidadAgregada")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("Existencia")
+                        .HasColumnType("REAL");
+
                     b.Property<double>("Precio")
                         .HasColumnType("REAL");
 
@@ -326,6 +365,8 @@ namespace DealerAutos.Server.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasKey("DetalleId");
+
+                    b.HasIndex("VehiculoId");
 
                     b.HasIndex("VentaId");
 
@@ -342,13 +383,20 @@ namespace DealerAutos.Server.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<double>("CantidadAgregada")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("Cedula")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Direccion")
                         .IsRequired()
+                        .HasMaxLength(30)
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("EmpleadoId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("Fecha")
                         .HasColumnType("TEXT");
@@ -364,22 +412,31 @@ namespace DealerAutos.Server.Migrations
                     b.Property<double>("Total")
                         .HasColumnType("REAL");
 
+                    b.Property<int>("VehiculoId")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("VentaId");
 
                     b.ToTable("Ventas");
                 });
 
-            modelBuilder.Entity("CompraDetalles", b =>
+            modelBuilder.Entity("Compras", b =>
                 {
-                    b.HasOne("Compras", null)
-                        .WithMany("VehiculosDetalles")
-                        .HasForeignKey("CompraId")
+                    b.HasOne("Usuario", null)
+                        .WithMany("Compras")
+                        .HasForeignKey("UsuarioId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("VehiculosDetalles", b =>
                 {
+                    b.HasOne("Vehiculos", null)
+                        .WithMany("VehiculosDetalles")
+                        .HasForeignKey("VehiculoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Ventas", null)
                         .WithMany("VehiculosDetalles")
                         .HasForeignKey("VentaId")
@@ -387,7 +444,12 @@ namespace DealerAutos.Server.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Compras", b =>
+            modelBuilder.Entity("Usuario", b =>
+                {
+                    b.Navigation("Compras");
+                });
+
+            modelBuilder.Entity("Vehiculos", b =>
                 {
                     b.Navigation("VehiculosDetalles");
                 });

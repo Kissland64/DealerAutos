@@ -1,6 +1,8 @@
 @page "/VentaVehiculos"
 @page "/VentaVehiculos/{VentaId:int}"
+@* @attribute [Authorize(Roles = "Administrador")] *@
 @using DealerAutos.Client.Extensors
+@using Microsoft.AspNetCore.Authorization;
 @inject HttpClient httpClient
 @inject NotificationService notificationService
 
@@ -11,62 +13,103 @@
         <div class="card shadow-lg">
             <div class="card-header">
                 <h3>Registro de ventas.</h3>
-            </div>
-            <div class=card-body>
-                <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 col-xl-4">
-                    <label>Venta Id:</label>
-                    <div class="input-group mb-3">
-                        <InputNumber @bind-Value="ventas.VentaId" class="form-control" aria-describedby="BotonBuscar" />
-                        <button @onclick="Buscar" class="btn btn-outline-primary" 
-                        type="button" id="BotonBuscar"><i class="oi oi-magnifying-glass"></i></button>
+                </div>
+                <div class=card-body>
+            <div class="row">
+                    <div class="col">
+                        <label>Venta Id:</label>
+                        <div class="input-group mb-3">
+                            <InputNumber @bind-Value="ventas.VentaId" class="form-control" aria-describedby="BotonBuscar" />
+                            <button @onclick="Buscar" class="btn btn-outline-primary" 
+                            type="button" id="BotonBuscar"><i class="oi oi-magnifying-glass"></i></button>
+                        </div>
+                    </div>
+                    <div class="col">
+                            <div class="mb-3">
+                            <label class="form-label" for="Fecha">Fecha:</label>
+                            <InputDate @bind-Value="ventas.Fecha" class="form-control" />
+                            <ValidationMessage For="() => ventas.Fecha" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="mb-3">
+                            <label class="form-label" for="Nombre">
+                                <i class="oi oi-person"></i> Nombre:
+                            </label>
+                            <InputText @bind-Value="ventas.Nombre" class="form-control" placeholder="Escribe un nombre" />
+                            <ValidationMessage For="() => ventas.Nombre" />
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="mb-3">
+                            <label class="form-label" for="Apellido">
+                                <i class="oi oi-person"></i> Apellido:
+                            </label>
+                            <InputText @bind-Value="ventas.Apellido" class="form-control" placeholder="Escribe un apellido" />
+                            <ValidationMessage For="() => ventas.Apellido" />
+                        </div>
                     </div>
                 </div>
 
-                <div class="mb-3">
-                    <label class="form-label" for="Fecha">Fecha:</label>
-                    <InputDate @bind-Value="ventas.Fecha" class="form-control" />
-                    <ValidationMessage For="() => ventas.Fecha" />
+                <div class="row">
+                    <div class="col">
+                        <div class="mb-3">
+                            <label class="form-label" for="Cedula">
+                                <i class="oi oi-credit-card"></i> Cédula:
+                            </label>
+                            <InputText @bind-Value="ventas.Cedula" class="form-control" placeholder="Escribe una cédula" />
+                            <ValidationMessage For="() => ventas.Cedula" />
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="mb-3">
+                            <label class="form-label" for="Telefono">
+                                <i class="oi oi-phone"></i> Teléfono:
+                            </label>
+                            <InputText @bind-Value="ventas.Telefono" class="form-control" placeholder="Escribe una numero de teléfono" />
+                            <ValidationMessage For="() => ventas.Telefono" />
+                        </div>
+                    </div>
                 </div>
 
-                <div class="mb-3">
-                    <label class="form-label" for="Nombre">Nombre:</label>
-                    <InputText @bind-Value="ventas.Nombre" class="form-control" />
-                    <ValidationMessage For="() => ventas.Nombre" />
+                <div class="row">
+                    <div class="col">
+                        <div class="mb-3">
+                            <label class="form-label" for="Direccion">
+                                <i class="oi oi-location"></i> Dirección:
+                            </label>
+                            <InputText @bind-Value="ventas.Direccion" class="form-control" placeholder="Escribe una dirección" />
+                            <ValidationMessage For="() => ventas.Direccion" />
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="mb-3">
+                            <label>
+                                <i class="oi oi-document"></i> DNI vendedor:
+                            </label>
+                            <InputSelect @bind-Value="ventas.EmpleadoId" class="form-select">
+                            <option value="0"disabled selected>Selecciona</option>
+                                @foreach (var item in empleados)
+                                {
+                                    <option value="@item.EmpleadoId">@item.DNI</option>
+                                }
+                            </InputSelect>
+                            <ValidationMessage For="@(() => ventas.EmpleadoId)" />
+                        </div>
+                    </div>
                 </div>
-
-                <div class="mb-3">
-                    <label class="form-label" for="Apellido">Apellido:</label>
-                    <InputText @bind-Value="ventas.Apellido" class="form-control" />
-                    <ValidationMessage For="() => ventas.Apellido" />
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label" for="Cedula">Cédula:</label>
-                    <InputText @bind-Value="ventas.Cedula" class="form-control" />
-                    <ValidationMessage For="() => ventas.Cedula" />
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label" for="Telefono">Teléfono:</label>
-                    <InputText @bind-Value="ventas.Telefono" class="form-control" />
-                    <ValidationMessage For="() => ventas.Telefono" />
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label" for="Direccion">Dirección:</label>
-                    <InputText @bind-Value="ventas.Direccion" class="form-control" />
-                    <ValidationMessage For="() => ventas.Direccion" />
-                </div>
-                
                 <hr>
                 <fieldset>
-                    <legend>Lista de vehiculos:</legend>
+                    <legend>Lista de Vehículos:</legend>
                     <div class="row">
                         <div class="col-4">
-                            <label for="SelectP">Vehiculos:</label>
+                            <label for="SelectP">Vehículos:</label>
                             <div class = "input-group">
                                 <RadzenDropDown class="form-control" Data="@L_Vehiculos.Where(p => p.VehiculoId != 5)" TextProperty="Modelo" ValueProperty="VehiculoId" @bind-Value="@vehiculosDetalles.VehiculoId"></RadzenDropDown>
                                 <button type="button" class="btn btn-dark" @onclick="AgregarDetalle">Agregar <i class="oi oi-plus" /></button> 
+                                <ValidationMessage For="@(() => vehiculosDetalles.Cantidad)" />
                             </div>
                         </div>
                     </div>
@@ -74,7 +117,7 @@
                         <thead>
                             <tr>
                                 <th>Imagen</th>
-                                <th>VehiculoId</th>
+                                <th>Vehículo</th>
                                 <th>Modelo</th>
                                 <th>Marca</th>
                                 <th>Tipo</th>
@@ -123,18 +166,32 @@
     [Parameter]
     public int VentaId { get; set; }
     public int VehiculoId { get; set; }
+    public int DetalleId { get; set;  }
     public Ventas ventas { get; set; } = new Ventas();
     public VehiculosDetalles vehiculosDetalles { get; set; } = new VehiculosDetalles();
     public string Mensaje { get; set; } = string.Empty;
     public List<Vehiculos> L_Vehiculos { get; set; } = new List<Vehiculos>();
-    
+    public List<Empleados> L_Empleados { get; set; } = new List<Empleados>();
+    public IEnumerable<Empleados> empleados { get; set; } = Enumerable.Empty<Empleados>();
+    public bool DetalleEliminado { get; set; } = false;
+
     protected override async Task OnInitializedAsync()
     {
         var vehiculos = await httpClient.GetFromJsonAsync<List<Vehiculos>>("api/Vehiculos");
-
+        await CargarDNI();
         if (vehiculos is not null)
         {
             L_Vehiculos = vehiculos;
+        }
+
+    }
+
+    private async Task CargarDNI()
+    {
+        var empleadoEncontrado = await httpClient.GetFromJsonAsync<IEnumerable<Empleados>>("api/Empleados");
+        if(empleadoEncontrado != null)
+        {
+            empleados = empleadoEncontrado;
         }
     }
 
@@ -153,7 +210,7 @@
             NotificationSeverity.Info
         );
     }
-    
+
     public async Task Buscar()
     {
         try
@@ -192,6 +249,23 @@
     {
         try
         {
+            if (ventas.VehiculosDetalles.Count == 0)
+            {
+                notificationService.ShowNotification(
+                    titulo: "Error",
+                    mensaje: "Debe agregar al menos un detalle antes de guardar la venta",
+                    NotificationSeverity.Error
+                );
+                return;
+            }
+
+            if (DetalleEliminado)
+            {
+
+                DetalleEliminado = false;
+                return;
+            }
+
             using var response = await httpClient.PostAsJsonAsync("api/Ventas", ventas);
             response.EnsureSuccessStatusCode();
             var exito = await response.Content.ReadFromJsonAsync<Ventas>();
@@ -231,7 +305,21 @@
         {
             using var response = await httpClient.DeleteAsync($"api/Ventas/{ventas.VentaId}");
             response.EnsureSuccessStatusCode();
+
+            foreach (var detalle in ventas.VehiculosDetalles)
+            {
+                var vehiculo = await BuscarVehiculo(detalle.VehiculoId);
+                if (vehiculo != null)
+                {
+                    vehiculo.Existencia += detalle.Cantidad;
+                    using var response1 = await httpClient.PutAsJsonAsync($"api/Vehiculos/{vehiculo.VehiculoId}", vehiculo);
+                    Console.WriteLine();
+                }
+            }
+
             Nuevo();
+            ventas.VehiculosDetalles.Clear();
+
             notificationService.ShowNotification(
                 titulo: "Eliminado",
                 mensaje: "La venta se ha eliminado correctamente",
@@ -264,13 +352,17 @@
         {
             return false;
         }
+        if (vehiculosDetalles.Existencia < 0)
+        {
+            return false;
+        }
         else
         {
             return true;
         }
     }
 
-    private async Task<Vehiculos> BuscarVentas(int VehiculoId)
+    private async Task<Vehiculos> BuscarVehiculo(int VehiculoId)
     {
         var vehiculos = await httpClient.GetFromJsonAsync<Vehiculos>($"api/Vehiculos/{VehiculoId}");
 
@@ -281,26 +373,70 @@
 
         return vehiculos;
     }
-    
+
     public async Task AgregarDetalle()
     {
         if (ValidarDetalle())
         {
-            var vehiculos = await httpClient.GetFromJsonAsync<Vehiculos>($"api/Vehiculos/{vehiculosDetalles.VehiculoId}");
+            var vehiculo = await httpClient.GetFromJsonAsync<Vehiculos>($"api/Vehiculos/{vehiculosDetalles.VehiculoId}");
 
-            if (vehiculos != null)
+            if (vehiculo != null && vehiculo.Existencia > 0)
             {
-                vehiculosDetalles.Precio = vehiculos.Precio;
+                vehiculosDetalles.Precio = vehiculo.Precio;
                 ventas.VehiculosDetalles.Add(vehiculosDetalles);
                 SetTotal();
+
+                vehiculo.Existencia -= vehiculosDetalles.Cantidad;
+
+                using var response = await httpClient.PutAsJsonAsync($"api/Vehiculos/{vehiculosDetalles.VehiculoId}", vehiculo);
+
                 vehiculosDetalles = new VehiculosDetalles();
+
+                notificationService.ShowNotification(
+                    titulo: "Éxito",
+                    mensaje: "Detalle agregado correctamente",
+                    NotificationSeverity.Success
+                );
+            }
+            else
+            {
+                notificationService.ShowNotification(
+                    titulo: "Error",
+                    mensaje: "No hay existencia suficiente para el vehículo seleccionado",
+                    NotificationSeverity.Error
+                );
             }
         }
     }
 
-    public void EliminarDetalle(VehiculosDetalles vehiculosDetalles)
+    public async Task EliminarDetalle(VehiculosDetalles vehiculosDetalles)
     {
-        this.ventas.VehiculosDetalles.Remove(vehiculosDetalles);
-        SetTotal();
+        try
+        {
+            this.ventas.VehiculosDetalles.Remove(vehiculosDetalles);
+            SetTotal();
+            DetalleEliminado = true;
+
+            foreach (var detalle in ventas.VehiculosDetalles)
+            {
+                var vehiculo = await BuscarVehiculo(detalle.VehiculoId);
+                if (vehiculo != null)
+                {
+                    vehiculo.Existencia += detalle.Cantidad;
+                    await httpClient.PutAsJsonAsync($"api/Vehiculos/{vehiculo.VehiculoId}", vehiculo);
+                }
+            }
+
+            var vehiculoEliminado = await BuscarVehiculo(vehiculosDetalles.VehiculoId);
+            vehiculoEliminado.Existencia += vehiculosDetalles.Cantidad;
+        }
+        catch (Exception ex)
+        {
+            notificationService.ShowNotification(
+                titulo: "Error al eliminar detalle",
+                mensaje: ex.Message,
+                NotificationSeverity.Error
+            );
+        }
     }
 }

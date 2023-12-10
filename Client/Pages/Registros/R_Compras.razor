@@ -1,0 +1,152 @@
+@page "/Compra/{VehiculoId:int}"
+@* @attribute [Authorize(Roles = "Cliente")] *@
+@using Microsoft.AspNetCore.Authorization;
+@using DealerAutos.Client.Sesion;
+@using DealerAutos.Client.Extensors;
+@inject HttpClient httpClient
+@inject NotificationService notificationService
+@inject IUsuarioAutenticadoService usuarioAutenticadoService
+
+<div class="container">
+    <div class="card shadow-lg">
+        <div class="card-header">
+        </div> 
+        <div class=card-body>
+            <div class="img-container">
+                @if (vehiculos?.Imagen != null)
+                {
+                    <img src="@vehiculos.Imagen" alt="Placeholder" class="card-img-top" style="max-height: 700px;" />
+                }
+                else
+                {
+                    <img src="path/to/default/image.jpg" alt="Placeholder" class="card-img-top" style="max-height: 200px;" />
+                }
+                @if (vehiculoAgregado)
+                {
+                    <div class="alert alert-success mt-3" role="alert">
+                        @($"{vehiculos?.Modelo} ha sido agregado al carrito.")
+                    </div>
+                }
+            </div>
+            <h1></h1>
+            <strong>Marca del vehículo:</strong>
+            <div class="mb-3 mx-3 ">
+                <label class="form-label">@vehiculos?.Marca</label>
+            </div>
+            
+            <strong>Modelo del vehículo:</strong>
+            <div class="mb-3 mx-3 ">
+                <label class="form-label">@vehiculos?.Modelo</label>
+            </div>
+            
+            <strong>Tipo de vehículo:</strong>
+            <div Class="form-group mx-3 mb-3">
+                <label class="row-text">@vehiculos?.Tipo</label>
+            </div>
+
+            <strong>Año del vehículo:</strong>
+            <div class="mb-3 mx-3 ">
+                <label class="form-label">@vehiculos?.Anio</label>
+            </div>
+
+
+            <strong>Precio del vehículo:</strong>
+            <div class="form-group mb-3  mx-3 ">
+                <label class="form-label"><i class="oi oi-dollar" /> @vehiculos?.Precio.ToString("0.00")</label>
+            </div>
+            <div class="row">
+                <div >
+                    <div class="d-flex justify-content-center mt-3">
+                        <button type="button" class="btn btn-outline-primary" @onclick="AgregarAlCarrito">
+                            Añadir al Carrito <i class="oi oi-cart" />
+                        </button>
+                    </div>
+                    <div class="d-flex justify-content-center mt-3">
+                        <NavLink href="/Carrito" class="btn btn-outline-secondary">
+                            Volver atrás
+                        </NavLink>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int VehiculoId { get; set; }
+    public int UsuarioId { get; set; }
+    public Vehiculos vehiculos { get; set; }
+    public Compras Compra { get; set; } = new Compras();
+    public Usuario? user { get; set; }
+    private bool vehiculoAgregado = false;
+
+
+    override protected async Task OnInitializedAsync()
+    {
+        try
+        {
+            user = usuarioAutenticadoService.Usuarios;
+            var resultado = await httpClient.GetFromJsonAsync<Vehiculos>($"api/Vehiculos/{VehiculoId}");
+            if (resultado != null)
+            {
+                vehiculos = resultado;
+            }
+
+        }
+        catch (Exception ex)
+        {
+            notificationService.ShowNotification(
+                 titulo: "Error de búsqueda",
+                mensaje: "Registro no encontrado" + ex.Message,
+                NotificationSeverity.Error
+            );
+        }
+    }
+
+    private async Task AgregarAlCarrito()
+    {
+        vehiculoAgregado = true;
+        if (user == null)
+        {
+            notificationService.ShowNotification(
+                titulo: "Error",
+                mensaje: "Debes iniciar sesión para comprar",
+                NotificationSeverity.Error
+            );
+            return;
+        }
+
+        if (vehiculos == null)
+        {
+            notificationService.ShowNotification(
+                titulo: "Error",
+                mensaje: "No se puede agregar al carrito.",
+                NotificationSeverity.Error
+            );
+            return;
+        }
+
+        
+        if (user.Compras.Any(compra => compra.VehiculoId == vehiculos.VehiculoId))
+        {
+            notificationService.ShowNotification(
+                titulo: "Advertencia",
+                mensaje: "Ya has añadido este vehiculo previamente.",
+                NotificationSeverity.Warning
+            );
+            return;
+        }
+
+        Compra.UsuarioId = user.UsuarioId;
+        Compra.VehiculoId = vehiculos.VehiculoId;
+        user.Compras.Add(Compra);
+        usuarioAutenticadoService.AgregarVehiculosAlCarrito(vehiculos);
+
+        notificationService.ShowNotification(
+            titulo: "Agregado al carrito",
+            mensaje: $"{vehiculos.Marca} ha sido agregado al carrito.",
+            NotificationSeverity.Success
+        );
+    }
+}

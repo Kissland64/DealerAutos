@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33815.320
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DealerAutos.Server", "Server\DealerAutos.Server.csproj", "{FC3EBFA9-0274-454D-81F8-ACDD415778B9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DealerAutos.Server", "Server\DealerAutos.Server.csproj", "{FC3EBFA9-0274-454D-81F8-ACDD415778B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DealerAutos.Client", "Client\DealerAutos.Client.csproj", "{DFF4524F-95FE-4372-8DE7-A1A65E01CAF2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DealerAutos.Client", "Client\DealerAutos.Client.csproj", "{DFF4524F-95FE-4372-8DE7-A1A65E01CAF2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DealerAutos.Shared", "Shared\DealerAutos.Shared.csproj", "{854B9D36-B052-42D2-805B-ACA013AE98C5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DealerAutos.Shared", "Shared\DealerAutos.Shared.csproj", "{854B9D36-B052-42D2-805B-ACA013AE98C5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

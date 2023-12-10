@@ -1,0 +1,250 @@
+@page "/Empleado"
+@page "/Empleado/{EmpleadoId:int}"
+@using DealerAutos.Client.Extensors
+@inject HttpClient httpClient
+@inject NotificationService NotificationService
+@inject NotificationService notificationService
+
+<EditForm Model="empleados" OnValidSubmit = "Guardar">
+    <DataAnnotationsValidator />
+
+    <div class="container">
+        <div class="card shadow-lg">
+            <div class="card-header">
+                <h3>Registro de empleados</h3>
+            </div>
+            
+            <div class="card-body">
+                <div class="col-2">
+                    <label>ID de Empleado:</label>
+                    <div class="input-group mb-3">
+                        <InputNumber @bind-Value="empleados.EmpleadoId" class="form-control" aria-describedby="BotonBuscar" />
+                        <div class="input-group-append">
+                            <button @onclick="Buscar" class="btn btn-outline-primary" type="button" id="BotonBuscar">
+                                <i class="oi oi-magnifying-glass"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="col">
+                            <label class="form-label" for="Nombre">Nombre:</label>
+                            <div class="input-group">
+                                <InputText @bind-Value="empleados.Nombre" class="form-control" placeholder="Escribe un nombre" />
+                                <span class="input-group-text"><i class="oi oi-person"></i></span>
+                            </div>
+                            <ValidationMessage For="@(() => empleados.Nombre)" />
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="col">
+                            <label class="form-label" for="Apellido">Apellido:</label>
+                            <div class="input-group">
+                                <InputText @bind-Value="empleados.Apellido" class="form-control" placeholder="Escribe un apellido" />
+                                <span class="input-group-text"><i class="oi oi-person"></i></span>
+                            </div>
+                            <ValidationMessage For="@(() => empleados.Apellido)" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="mb-3">
+                            <label class="form-label" for="DNI">DNI del Empleado:</label>
+                            <div class="input-group">
+                                <InputText @bind-Value="empleados.DNI" class="form-control" placeholder="Escribe un DNI" />
+                                <span class="input-group-text"><i class="oi oi-document"></i></span>
+                            </div>
+                            <ValidationMessage For="@(() => empleados.DNI)" />
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="mb-3">
+                            <label class="form-label" for="Cedula">Cédula:</label>
+                            <div class="input-group">
+                                <InputText @bind-Value="empleados.Cedula" class="form-control" placeholder="Escribe una cédula " />
+                                <span class="input-group-text"><i class="oi oi-credit-card"></i></span>
+                            </div>
+                            <ValidationMessage For="@(() => empleados.Cedula)" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="mb-3">
+                            <label class="form-label" for="Telefono">Teléfono:</label>
+                            <div class="input-group">
+                                <InputText @bind-Value="empleados.Telefono" class="form-control" placeholder="Escribe un numero de teléfono" />
+                                <span class="input-group-text"><i class="oi oi-phone"></i></span>
+                            </div>
+                            <ValidationMessage For="@(() => empleados.Telefono)" />
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="mb-3">
+                            <label class="form-label" for="Direccion">Dirección:</label>
+                            <div class="input-group">
+                                <InputText @bind-Value="empleados.Direccion" class="form-control" placeholder="Escribe una dirección" />
+                                <span class="input-group-text"><i class="oi oi-location"></i></span>
+                            </div>
+                            <ValidationMessage For="@(() => empleados.Direccion)" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="card-footer d-flex justify-content-center">
+            <div class="btn-group">
+                <button type="button" class="btn btn-outline-primary" @onclick="Nuevo">Nuevo <i class="oi oi-file"></i></button>
+                <button type="submit" class="btn btn-outline-success">Guardar <i class="oi oi-document"></i></button>
+                <button type="button" class="btn btn-outline-danger" @onclick="Eliminar">Eliminar <i class="oi oi-trash"></i></button>
+            </div>
+       </div>
+</div>
+
+</EditForm>
+
+@code {
+    [Parameter]
+    public int EmpleadoId { get; set; }
+
+    public int Nombre { get; set; }
+
+    public Empleados empleados { get; set; } = new Empleados();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (EmpleadoId != 0)
+        {
+            EmpleadoId = empleados.EmpleadoId;
+            //await Buscar();
+        }            
+
+    }
+
+    // protected override async Task OnParametersSetAsync()
+    // {
+    //     await base.OnParametersSetAsync();
+    //     empleados.EmpleadoId = EmpleadoId;
+    //     await Buscar();
+    // }
+
+    public void Nuevo()
+    {
+        empleados = new Empleados();
+        notificationService.ShowNotification(
+            titulo: "Nueva venta",
+            mensaje: "Se han limpiado los campos.",
+            NotificationSeverity.Info
+        );
+    }
+
+    public async Task Buscar()
+    {
+        try
+        {
+            var empleadoEncontrado = await httpClient.GetFromJsonAsync<Empleados>($"api/Empleados/{empleados.EmpleadoId}");
+            if (empleadoEncontrado != null)
+            {
+                empleados = empleadoEncontrado;
+                StateHasChanged();
+                notificationService.ShowNotification(
+                    titulo: "Búsqueda exitosa",
+                    mensaje: "Se encontró el empleado.",
+                    NotificationSeverity.Success
+                );
+            }
+            else
+            {
+                notificationService.ShowNotification(
+                    titulo: "Error de búsqueda",
+                    mensaje: "Registro no encontrado",
+                    NotificationSeverity.Error
+                );
+            }
+        }
+        catch (Exception ex)
+        {
+            notificationService.ShowNotification(
+                titulo: "Error de búsqueda",
+                mensaje: ex.Message,
+                NotificationSeverity.Error
+            );
+        }
+    }
+
+
+    public async Task Guardar()
+    {
+        try
+        {
+            using var response = await httpClient.PostAsJsonAsync("api/Empleados", empleados);
+            response.EnsureSuccessStatusCode();
+            var empleadoDevuelto = await response.Content.ReadFromJsonAsync<Empleados>();
+            if (empleadoDevuelto is not null)
+            {
+                empleados = empleadoDevuelto;
+                StateHasChanged();
+                Nuevo();
+                NotificationService.ShowNotification(
+                    titulo: "Éxito",
+                    mensaje: "Empleado guardado exitosamente",
+                    NotificationSeverity.Success
+                );
+            }
+            else
+            {
+                NotificationService.ShowNotification(
+                    titulo: "Error",
+                    mensaje: "El empleado no se guardó correctamente",
+                    NotificationSeverity.Error
+                );
+            }
+        }
+        catch (Exception ex)
+        {
+            NotificationService.ShowNotification(
+                titulo: "Error",
+                mensaje: ex.Message,
+                NotificationSeverity.Error
+            );
+        }
+    }
+
+    public async Task Eliminar()
+    {
+        try
+        {
+            using var response = await httpClient.DeleteAsync($"api/Empleados/{empleados.EmpleadoId}");
+            response.EnsureSuccessStatusCode();
+            Nuevo();
+            NotificationService.ShowNotification(
+                titulo: "Eliminado",
+                mensaje: "El empleado se ha eliminado correctamente",
+                NotificationSeverity.Success
+            );
+        }
+        catch (Exception ex)
+        {
+            NotificationService.ShowNotification(
+                titulo: "Error",
+                mensaje: ex.Message,
+                NotificationSeverity.Error
+            );
+        }
+    }
+    @*
+     public void ShowProductsList()
+    {
+        modalService.Show<C_Empleados>(
+            "Lista de empleados",
+            new ModalOptions
+            {
+                Size = ModalSize.ExtraLarge
+            }
+        );
+    }
+    *@
+}
