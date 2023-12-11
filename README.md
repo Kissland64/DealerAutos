@@ -2,9 +2,19 @@
 Este proyecto fue creado a con la finalidad de hacer un sistema de ventas y control de inventario de los vehiculos.
 
 Link del video: https://youtu.be/ILQorq6-X_E?si=Pwff5kQwsBV9whCp
+
 # Iniciar sesion, registrarse y listado de usuarios:
+![image](https://github.com/Kissland64/DealerAutos/assets/132521167/22d4d20a-ad37-4c41-b167-681c635392dc)
 
+Como se puede ver aqui tenemos nuestro iniciar sesion en el cual nos iniciamos sesion con nuestro correo y contraseña,
+Aparte tambien tenemos nuestros dos botones de iniciar sesion y registrarse.
 
+![Screenshot 2023-12-10 154119](https://github.com/Kissland64/DealerAutos/assets/132521167/b21f0062-1781-4cea-a026-fb1c177c7394)
+Aqui tenemos lo que es el apartado de registrase con sus respectivos campos y un boton de guardado para la informacion y mas arriba
+tenemos los que el iniciar sesion para poder ingresar nuestro correo y contraseña para acceder.
+
+![Screenshot 2023-12-10 154207](https://github.com/Kissland64/DealerAutos/assets/132521167/0a32c245-9bf7-4ec1-86a4-2a3dbf7cb268)
+Aqui tenemos nuestro listado de usuarios en cual se puede filtrar por cada campo y buscar la informacion que sea necesaria.
 
 # Tienda:
 ![Screenshot 2023-12-10 152847](https://github.com/Kissland64/DealerAutos/assets/132521167/914f3fc8-506e-4c95-aede-567e024ddc96)
