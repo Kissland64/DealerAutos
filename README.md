@@ -2,6 +2,9 @@
 Este proyecto fue creado a con la finalidad de hacer un sistema de ventas y control de inventario de los vehiculos.
 
 Link del video: https://youtu.be/ILQorq6-X_E?si=Pwff5kQwsBV9whCp
+# Iniciar sesion, registrarse y listado de usuarios:
+
+
 
 # Tienda:
 ![Screenshot 2023-12-10 152847](https://github.com/Kissland64/DealerAutos/assets/132521167/914f3fc8-506e-4c95-aede-567e024ddc96)
@@ -42,3 +45,9 @@ para buscar el vehiculo registrado por su Id, el boton de guardar la informacion
 
 ![image](https://github.com/Kissland64/DealerAutos/assets/132521167/d8e16ca4-2c28-4151-9e17-4ea6a2c25b21)
 
+Aqui tenemos lo que es nuestra lista de vehiculos o nuestro inventario en este caso con sus campos respectivos, en la parte de arriba a la izquierda tenemos un
+menu seleccionable sobre el campo el cual queremos buscar y su derecha esta la barra de busqueda donde vamos a ingresar lo que queremos buscar. 
+Tambien mas arriba tenemos un rango de fecha para hacer la busqueda en una fecha estipulado o mejor dicho cuando se registro ese vehiculo.
+
+# Lista de Marcas validas para ingresar:
+![Screenshot 2023-12-10 154445](https://github.com/Kissland64/DealerAutos/assets/132521167/d3b24a4a-c789-4e6a-bd02-d5974da024e9)
