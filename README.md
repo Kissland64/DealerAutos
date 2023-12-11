@@ -6,8 +6,8 @@ Link del video: https://youtu.be/ILQorq6-X_E?si=Pwff5kQwsBV9whCp
 # Iniciar sesion, registrarse y listado de usuarios:
 ![image](https://github.com/Kissland64/DealerAutos/assets/132521167/22d4d20a-ad37-4c41-b167-681c635392dc)
 
-Como se puede ver aqui tenemos nuestro iniciar sesion en el cual nos iniciamos sesion con nuestro correo y contraseña,
-Aparte tambien tenemos nuestros dos botones de iniciar sesion y registrarse.
+Como se puede ver aqui tenemos nuestro iniciar sesion con nuestro correo y contraseña,
+Aparte tambien tenemos nuestros dos botones de iniciar sesion y registrarse si todavia no lo has hecho.
 
 ![Screenshot 2023-12-10 154119](https://github.com/Kissland64/DealerAutos/assets/132521167/b21f0062-1781-4cea-a026-fb1c177c7394)
 Aqui tenemos lo que es el apartado de registrase con sus respectivos campos y un boton de guardado para la informacion y mas arriba
